@@ -1,28 +1,29 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { Task, TaskStatus } from '../../features/tasks/task.model';
-import { v4 as uuidv4 } from 'uuid'; // Para gerar IDs únicos
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class TaskStorageService {
 
   // Usamos 'writableSignal' com `signal()` para criar um estado que podemos modificar.
-  // É privado para que os componentes não possam modificá-lo diretamente, garantindo que toda alteração passe pelos métodos deste serviço.
+  // É privado (#) para que os componentes não possam modificá-lo diretamente, garantindo que toda alteração passe pelos métodos deste serviço.
   #tasks = signal<Task[]>([]);
 
   // Signal computado que processa as tarefas
   public tasksWithDynamicStatus = computed(() => {
     const now = new Date();
-    // Pega as tarefas do signal original
-    return this.#tasks().map(task => {
-      // Verifica se a tarefa está pendente, tem uma data de término e se essa data já passou
-      if (task.status === 'Pendente' && task.endDate && new Date(task.endDate) < now) {
-        // Retorna uma CÓPIA da tarefa com o status alterado
-        return { ...task, status: 'Perdida' as TaskStatus };
+
+    return this.#tasks().map(task => { // Pega as tarefas do signal original
+
+      if (task.status === 'Pendente' && task.endDate && new Date(task.endDate) < now) { // Verifica se a tarefa está pendente, tem uma data de término e se essa data já passou
+
+        return { ...task, status: 'Perdida' as TaskStatus }; // Retorna uma CÓPIA da tarefa com o status alterado
       }
-      // Se não, retorna a tarefa original
-      return task;
+
+      return task; // Se não, retorna a tarefa original
     });
   });
 
@@ -35,6 +36,18 @@ export class TaskStorageService {
 
   // Podemos criar outros para 'Completas', 'Perdidas', etc.
   public completedTasks = computed(() => this.tasks().filter(task => task.status === 'Completa'));
+
+  /**
+   * Gera uma lista de categorias únicas a partir das tarefas existentes,
+   * sempre incluindo a opção 'Todos'.
+   */
+  public availableCategories = computed(() => {
+    const tasks = this.#tasks();
+    // Usa um Set para garantir que cada categoria apareça apenas uma vez.
+    const uniqueCategories = new Set(tasks.map(task => task.category));
+    // Converte o Set de volta para um Array e adiciona 'Todos' no início.
+    return ['Todos', ...Array.from(uniqueCategories)];
+  });
 
   constructor() {
     // Carrega os dados iniciais quando o serviço é criado.

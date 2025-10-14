@@ -1,0 +1,53 @@
+.title-container {
+  display: flex;
+  // 'baseline' alinha a base do texto "Todos" com a base do texto "Hoje",
+  // o que fica visualmente mais agradável.
+  align-items: baseline;
+  gap: 1rem; // Adiciona um espaço entre o botão e o texto "Hoje"
+}
+
+.category-filter-btn {
+  // Remove o padding padrão do mat-button para um visual mais limpo
+  padding: 0 !important;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1;
+
+  .mat-icon {
+    // Ajusta o alinhamento vertical dos ícones
+    vertical-align: middle;
+  }
+}
+
+.button-content-wrapper {
+  display: inline-flex; // Usamos inline-flex para que o span se comporte bem dentro do botão
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.date-display {
+  color: #6b778c; // Deixa o texto da data com um cinza sutil
+  font-size: 14px; // Alinha melhor com o tamanho do título
+  font-weight: normal;
+}
+
+.hidden-datepicker-input {
+  display: none;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+
+  .mat-mdc-chip {
+    background-color: #e9ecef;
+    cursor: pointer; // Adiciona um feedback visual de que o chip é clicável
+  }
+
+  .mat-mdc-chip.active-chip {
+    background-color: #e3d5f5 !important;
+    color: #673ab7 !important;
+  }
+}

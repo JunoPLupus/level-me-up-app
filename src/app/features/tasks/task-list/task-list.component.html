@@ -1,39 +1,80 @@
 <div class="header">
   <div class="title-container">
-    <h1>Todos</h1>
-    <span>Hoje</span>
-  </div>
-  <div class="calendar-icon">
-    <mat-icon>calendar_today</mat-icon>
-  </div>
-</div>
 
-<mat-chip-listbox class="filters" aria-label="Filtro de tarefas" [value]="activeFilter()">
-  <mat-chip-option (click)="changeFilter('Pendente')" value="Pendente">
+    <button mat-button class="category-filter-btn" [matMenuTriggerFor]="categoryMenu">
+      <span class="button-content-wrapper">
+        <mat-icon>label_outline</mat-icon>
+        <span>{{ selectedCategory() }}</span>
+        <mat-icon>expand_more</mat-icon>
+      </span>
+    </button>
+
+    <mat-menu #categoryMenu="matMenu">
+      @for (category of categories(); track category) {
+        <button mat-menu-item (click)="changeCategory(category)">
+          <mat-icon>label_outline</mat-icon>
+          <span>{{ category }}</span>
+        </button>
+      }
+    </mat-menu>
+
+    <span class="date-display">{{ displayDate() }}</span>
+
+  </div> <!-- fim title-container -->
+
+  <div class="calendar-icon">
+
+    <input class="hidden-datepicker-input"
+           [matDatepicker]="picker"
+           (dateChange)="changeDate($event)">
+    <mat-datepicker #picker></mat-datepicker>
+
+    <button mat-icon-button (click)="picker.open()" aria-label="Escolher data">
+      <mat-icon>calendar_today</mat-icon>
+    </button>
+
+  </div> <!-- fim calendar-icon -->
+
+</div> <!-- fim header -->
+
+<div class="filters">
+  <mat-chip
+    [class.active-chip]="selectedStatus() === 'Pendente'"
+    (click)="changeFilter('Pendente')">
     Pendentes ({{ tasksCount().pendentes }})
-  </mat-chip-option>
-  <mat-chip-option (click)="changeFilter('Completa')" value="Completa">
+  </mat-chip>
+
+  <mat-chip
+    [class.active-chip]="selectedStatus() === 'Completa'"
+    (click)="changeFilter('Completa')">
     Concluídas ({{ tasksCount().concluidas }})
-  </mat-chip-option>
-  <mat-chip-option (click)="changeFilter('Perdida')" value="Perdida">
+  </mat-chip>
+
+  <mat-chip
+    [class.active-chip]="selectedStatus() === 'Perdida'"
+    (click)="changeFilter('Perdida')">
     Perdidas ({{ tasksCount().perdidas }})
-  </mat-chip-option>
-</mat-chip-listbox>
+  </mat-chip>
+</div> <!-- fim filters -->
 
 <div class="task-list-container">
   @for (group of groupedTasks(); track group[0]) {
+
     <div class="task-group">
       <h2 class="category-title">{{ group[0] }}</h2>
 
       @for (task of group[1]; track task.id) {
         <app-task-list-item [task]="task"></app-task-list-item>
       }
-    </div>
+    </div> <!-- fim task-group -->
+
   } @empty {
+
     <div class="empty-state">
       <p>Nenhuma tarefa encontrada.</p>
-    </div>
+    </div> <!-- fim empty-state -->
+
   }
-</div>
+</div> <!-- fim task-list-container -->
 
 <app-add-task-button></app-add-task-button>
