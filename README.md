@@ -1,32 +1,46 @@
-# 📝 Aplicativo Todo List
+# 📝 Aplicativo 'Level Me Up'
 
 ## 📌 Descrição do Projeto
-Este projeto tem por objetivo a criação de um aplicativo **Todo List**.
+Este projeto foi criado inicialmente como parte da disciplina de *Projeto de interface Web ministrada pelo professor: 
+Thiago Guimarães Tavares no curso de Sistemas para Internet do IFTO - Campus Palmas*,
+com objetivo a criação de um aplicativo **Todo List** básico e intuitivo.
 
-Este projeto foi criado como parte da disciplina de *Projeto de interface Web ministrada pelo professor: Thiago Guimarães Tavares no curso de Sistemas para Internet do IFTO - Campus Palmas*.
-
-O objetivo é gerenciar tarefas de forma simples e intuitiva, permitindo **adicionar**, **marcar como concluída** e **excluir** tarefas.
+O objetivo do aplicativo é gerenciar tarefas de forma gamificada e intuitiva,
+permitindo **adicionar**, **editar**, **excluir** tarefas e habilidades,
+podendo ganhar XP com a conclusão de tarefas.
 
 ---
 
 ## 🎨 Wireframe
 ![Wireframe - Task App.jpg]([src/resources/Wireframe - Task App.jpg](https://github.com/JunoPLupus/web-mobile-tasks-app/blob/master/src/resources/Wireframe%20-%20Task%20App.jpg))
 
-O projeto foi desenvolvido com base em um **wireframe** previamente planejado, utilizando a ferramenta 'Figma'.
+O projeto foi desenvolvido com base em um **wireframe** previamente planejado, utilizando a ferramenta 'Figma',
+e atualmente está sendo documentado através do Obsidian.
 
 ---
 
-## ⚙️ Funcionalidades Implementadas
-- ✅ Adicionar novas tarefas
-- 🗑️ Excluir tarefas
-- ✏️ Editar tarefas
-- 📈 Relatório de desempenho
+## ⚙️ Funcionalidades V1.0 (Em desenvolvimento)
+- ✅ Adicionar, Editar e Excluir **tarefas**.
+- 🦾 Adicionar, Editar e Excluir **habilidades**.
+- 🚩 Adicionar, Editar e Excluir **tags**.
+- 🧮 Gerenciar **níveis**.
+- 👤 Gerenciar **perfil**.
 
 ## 🤖 Funcionalidades Futuras
+- 📈 Relatório de desempenho
 - ⏰ Pomodoro Timer
 - 🌙 Alternar entre tema claro/escuro
 - 🔔 Notificações de lembrete
-- 👤 Login de usuário
+- 🔐 Login de usuário
+- 🌳 Árvore de Habilidades (Habilidades com sub-habilidades)
+- 🗂️ Tipos de Tarefas: 
+  - Normal (*Padrão*)
+  - Contagem (Vezes, Minutos, Horas, Litros, Páginas)
+  - Hábito Bom 
+  - Hábito Ruim
+- 💀 Sistema de Punição por tarefas não realizadas e hábitos ruins realizados
+- 🪙 Moedas
+- 🏪 Loja Virtual
 
 ## 💻 Tecnologias Utilizadas
 - Angular
