@@ -93,7 +93,7 @@ O projeto foi desenvolvido com base em um **wireframe** previamente planejado, u
 ---
 
 📝 Licença
-Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
 ---
 
