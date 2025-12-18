@@ -325,3 +325,357 @@ Data da última atualização: 2025-12-05T08:28:00
 	1. Ocorre após o *passo 2* do fluxo principal;
 	2. O usuário clica em `Não`;
 	3. O sistema fecha o pop-up e o caso de uso é encerrado.
+
+
+```plantuml
+@startuml teste
+    class Priority <<enumeration>> {
+        LOW
+        MEDIUM
+        HIGH
+    }
+    class Difficulty <<enumeration>> {
+        EASY
+        MEDIUM
+        HARD
+    }
+    class Frequency <<enumeration>> {
+        NONE
+        DAILY
+        WEEKLY
+        MONTHLY
+    }
+    class TaskStatus <<enumeration>> {
+        COMPLETED
+        FAILED
+        SKIPPED
+    }
+
+    class LevelInfo <<interface>> {
+        +currentLevel: number
+        +currentXp   : number
+        +nextLevelXp : number
+    }
+
+    class User <<interface>> {
+        +uid        : string
+        +displayName: string
+        +email      : string
+        +photoUrl   : string
+        +level      : LevelInfo
+        +skillIds   : string[]
+    }
+
+    class Skill <<interface>> {
+        +id         : string
+        +userId     : string
+        +name       : string
+        +icon       : string
+        +description: string
+        +level      : LevelInfo
+    }
+
+    class Tag <<interface>> {
+        +id      : string
+        +userId  : string
+        +name    : string
+        +colorHex: string
+    }
+
+    class TaskRule <<interface>> {
+        +id             : string
+        +userId         : string
+        +title          : string
+        +description    : string
+        +tagId          : string
+        +skillIds       : string[]
+        +priority       : Priority
+        +difficulty     : Difficulty
+        +xpReward       : number
+        +isXpManual     : boolean
+        +startDate      : Date
+        +endDate        : Date
+        +instanceEndTime: Date
+        +frequency      : Frequency
+        +isDeleted      : boolean
+    }
+
+    class TaskException <<interface>> {
+        +id          : string
+        +ruleId      : string
+        +originalDate: Date
+        +newTitle    : string
+        +newXpReward : number
+        +newDate     : Date
+        +isDeleted   : boolean
+    }
+
+    class TaskHistory <<interface>> {
+        +id              : string
+        +userId          : string
+        +ruleId          : string
+        +completionDate  : Date
+        +status          : TaskStatus
+        +snapshotTitle   : string
+        +snapshotXpEarned: number
+        +snapshotTagId   : string
+    }
+
+    User "1" *-- "1" LevelInfo : Has
+    Skill "1" *-- "1" LevelInfo : Has
+
+    User "1" --> "0..*" TaskRule : Create
+    User "1" --> "0..*" Skill : Create
+    User "1" --> "0..*" Tag : Create
+
+    TaskRule "1" --> "0..*" Skill : Reference (IDs)
+    TaskRule "1" --> "0..1" Tag : Reference (ID)
+
+    TaskRule "1" --o "0..*" TaskException : Has Exceptions
+    TaskRule "1" --o "0..*" TaskHistory : Generate History
+@enduml
+```
+
+
+
+```mermaid
+classDiagram
+
+  %% --- Value Objects / Types ---
+  
+  class Priority {
+  
+  <<enumeration>>
+  
+    LOW
+    
+    MEDIUM
+    
+    HIGH
+  
+  }
+  
+  class Difficulty {
+  
+  <<enumeration>>
+  
+    EASY
+    
+    MEDIUM
+    
+    HARD
+  
+  }
+  
+  class Frequency {
+  
+  <<enumeration>>
+  
+    NONE
+    
+    DAILY
+    
+    WEEKLY
+    
+    MONTHLY
+  
+  }
+  
+  class TaskStatus {
+  
+  <<enumeration>>
+  
+    COMPLETED
+    
+    FAILED
+    
+    SKIPPED
+  
+  }
+  
+    
+  
+  %% --- Interfaces Auxiliares ---
+  
+  class LevelInfo {
+  
+  <<interface>>
+  
+    +currentLevel: number
+    
+    +currentXp : number
+    
+    +nextLevelXp : number
+  
+  }
+  
+    
+  
+  %% --- Entidades Principais ---
+  
+  class User {
+  
+  <<interface>>
+  
+    +uid : string
+    
+    +displayName: string
+    
+    +email : string
+    
+    +photoUrl : string
+    
+    +level : LevelInfo
+    
+    +skillIds : string[]
+  
+  }
+  
+    
+  
+  class Skill {
+  
+  <<interface>>
+  
+    +id : string
+    
+    +userId : string
+    
+    +name : string
+    
+    +icon : string
+    
+    +description: string
+    
+    +level : LevelInfo
+  
+  }
+  
+    
+  
+  class Tag {
+  
+  <<interface>>
+  
+    +id : string
+    
+    +userId : string
+    
+    +name : string
+    
+    +colorHex: string
+  
+  }
+  
+    
+  
+  %% --- O Coração: Regra, Exceção, Histórico ---
+  
+    
+  
+  class TaskRule {
+  
+  <<interface>>
+  
+    +id : string
+    
+    +userId : string
+    
+    +title : string
+    
+    +description : string
+    
+    +tagId : string
+    
+    +skillIds : string[]
+    
+    +priority : Priority
+    
+    +difficulty : Difficulty
+    
+    +xpReward : number
+    
+    +isXpManual : boolean
+    
+    +startDate : Date
+    
+    +endDate : Date
+    
+    +instanceEndTime: Date
+    
+    +frequency : Frequency
+    
+    +isDeleted : boolean
+  
+  }
+  
+    
+  
+  class TaskException {
+  
+  <<interface>>
+  
+    +id : string
+    
+    +ruleId : string
+    
+    +originalDate: Date
+    
+    +newTitle : string
+    
+    +newXpReward : number
+    
+    +newDate : Date
+    
+    +isDeleted : boolean
+  
+  }
+  
+    
+  
+  class TaskHistory {
+  
+  <<interface>>
+  
+    +id : string
+    
+    +userId : string
+    
+    +ruleId : string
+    
+    +completionDate : Date
+    
+    +status : TaskStatus
+    
+    +snapshotTitle : string
+    
+    +snapshotXpEarned: number
+    
+    +snapshotTagId : string
+  
+  }
+  
+    
+  
+  %% --- Relacionamentos ---
+  
+  User "1" *-- "1" LevelInfo : Possui
+  
+  Skill "1" *-- "1" LevelInfo : Possui
+  
+  User "1" --> "0..*" TaskRule : Cria
+  
+  User "1" --> "0..*" Skill : Cria
+  
+  User "1" --> "0..*" Tag : Cria
+  
+    
+  
+  TaskRule "1" --> "0..*" Skill : Referencia (IDs)
+  
+  TaskRule "1" --> "0..1" Tag : Referencia (ID)
+  
+  TaskRule "1" --o "0..*" TaskException : Tem Exceções
+  
+  TaskRule "1" --o "0..*" TaskHistory : Gera Histórico
+```

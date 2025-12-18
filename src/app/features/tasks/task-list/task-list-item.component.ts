@@ -7,8 +7,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxChange} from '@angular/material/checkbox';
 
-import { Task } from '../task.model';
-import { TaskStorageService } from '../../../shared/task-storage/task-storage.service';
+import { Task } from '../../../domain/entities/task-rule.entity';
+import { TaskStorageService } from '../../../core/services/task-storage/task-storage.service';
 import { RelativeDatePipe } from '../../../shared/pipes/relative-date.pipe';
 
 

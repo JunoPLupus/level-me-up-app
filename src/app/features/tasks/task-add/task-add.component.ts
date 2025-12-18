@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TaskFormComponent } from '../task-form/task-form.component';
-import { Task } from '../task.model';
-import { TaskStorageService } from '../../../shared/task-storage/task-storage.service';
+import { Task } from '../../../domain/entities/task-rule.entity';
+import { TaskStorageService } from '../../../core/services/task-storage/task-storage.service';
 
 @Component({
   selector: 'app-task-add',

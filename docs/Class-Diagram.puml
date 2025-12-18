@@ -1,0 +1,170 @@
+@startuml classDiagram
+
+  package "Entities" {
+
+    package "task-types" {
+          enum Priority <<type>> {
+              LOW
+              MEDIUM
+              HIGH
+          }
+          enum Difficulty <<type>> {
+              EASY
+              MEDIUM
+              HARD
+          }
+          enum Frequency <<type>> {
+              NONE
+              DAILY
+              WEEKLY
+              MONTHLY
+          }
+          enum TaskStatus <<type>> {
+              COMPLETED
+              FAILED
+              SKIPPED
+          }
+      }
+
+      interface LevelInfo <<interface>> {
+          +currentLevel: number
+          +currentXp   : number
+          +nextLevelXp : number
+      }
+
+      interface User <<interface>> {
+          +uid         : string
+          +displayName : string
+          +email       : string
+          +photoUrl   ?: string
+          +level       : LevelInfo
+          +skillIds    : string[]
+      }
+
+      interface Skill <<interface>> {
+              +id           : string
+              +userId       : string
+              +name         : string
+              +icon        ?: string
+              +description ?: string
+              +level        : LevelInfo
+          }
+
+      interface Tag <<interface>> {
+          +id       : string
+          +userId   : string
+          +name     : string
+          +colorHex : string
+      }
+
+      interface TaskRule <<interface>> {
+          +id               : string
+          +userId           : string
+          +title            : string
+          +description     ?: string
+          +tagId           ?: string
+          +skillIds        ?: string[]
+          +priority         : Priority
+          +difficulty       : Difficulty
+          +xp               : number
+          +isXpManual       : boolean
+          +startDate        : Date
+          +endDate         ?: Date
+          +instanceEndTime ?: Date
+          +frequency       ?: Frequency
+          +isDeleted        : boolean
+          +createdAt        : Date
+          +updatedAt        : Date
+      }
+
+      interface TaskException <<interface>> {
+          +id           : string
+          +ruleId       : string
+          +originalDate : Date
+          +newTitle    ?: string
+          +newXp       ?: number
+          +newDate     ?: Date
+          +isDeleted    : boolean
+      }
+
+      interface TaskHistory <<interface>> {
+          +id                 : string
+          +userId             : string
+          +ruleId            ?: string
+          +registryDate       : Date
+          +status             : TaskStatus
+          +snapshotTitle      : string
+          +snapshotXp         : number
+          +snapshotTagId     ?: string
+          +snapshotSkillsIds ?: string[]
+      }
+
+  }
+
+  package "Repositories (Interfaces)" {
+          ' Contratos que a camada de Infraestrutura (Firebase) deve implementar
+
+          interface TaskRuleRepository <<interface>> {
+              +create(rule: TaskRule): Promise<void>
+              +update(rule: TaskRule): Promise<void>
+              +delete(id: string): Promise<void>
+              +getById(id: string): Observable<TaskRule | undefined>
+              +getAllByUserId(userId: string): Observable<TaskRule[]>
+          }
+
+          interface TaskHistoryRepository <<interface>> {
+              +create(log: TaskHistory): Promise<void>
+              +delete(id: string): Promise<void>
+              +getByDateRange(start: Date, end: Date): Observable<TaskHistory[]>
+          }
+
+          interface TaskExceptionRepository <<interface>> {
+              +create(exception: TaskException): Promise<void>
+              +getByRuleId(ruleId: string): Observable<TaskException[]>
+          }
+      }
+
+      package "Services / UseCases (Logic)" {
+          ' Quem orquestra a regra de negócio
+
+          class TaskFacadeService {
+              -taskRepo: TaskRuleRepository
+              -historyRepo: TaskHistoryRepository
+              -exceptionRepo: TaskExceptionRepository
+
+              +getTasksForDate(date: Date): Observable<TaskView[]>
+              +createTask(rule: TaskRule): Promise<void>
+              +editTask(ruleId: string, changes: Partial<TaskRule>, updateFuture: boolean): Promise<void>
+              +completeTask(task: TaskView): Promise<void>
+          }
+
+          class GenerateOccurrencesUseCase {
+              +execute(rules: TaskRule[], exceptions: TaskException[], targetDate: Date): TaskView[]
+          }
+
+          class LevelCalculatorService {
+              +calculateNextLevelXp(currentLevel: number): number
+              +addXpToUser(user: User, amount: number): User
+          }
+      }
+
+    User "1" *-- "1" LevelInfo
+    Skill "1" *-- "1" LevelInfo
+
+    User "1" --> "0..*" TaskRule : Create
+    User "1" --> "0..*" Skill : Create
+    User "1" --> "0..*" Tag : Create
+
+    TaskRule "1" --> "0..*" Skill
+    TaskRule "1" --> "0..1" Tag
+
+    TaskRule "1" --o "0..*" TaskException
+    TaskRule "1" --o "0..*" TaskHistory : Generate History
+
+    ' Dependências dos Serviços
+    TaskFacadeService ..> TaskRuleRepository : uses
+    TaskFacadeService ..> TaskHistoryRepository : uses
+    TaskFacadeService ..> GenerateOccurrencesUseCase : uses
+    TaskFacadeService ..> LevelCalculatorService : uses
+
+@enduml

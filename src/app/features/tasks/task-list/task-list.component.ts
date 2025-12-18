@@ -1,7 +1,7 @@
 import {Component, computed, inject, Signal, signal} from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { TaskStorageService } from '../../../shared/task-storage/task-storage.service';
-import { Task, TaskStatus } from '../task.model';
+import { TaskStorageService } from '../../../core/services/task-storage/task-storage.service';
+import { Task, TaskStatus } from '../../../domain/entities/task-rule.entity';
 
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';

@@ -1,8 +1,8 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { Task } from '../task.model';
-import { TaskStorageService } from '../../../shared/task-storage/task-storage.service';
+import { Task } from '../../../domain/entities/task-rule.entity';
+import { TaskStorageService } from '../../../core/services/task-storage/task-storage.service';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';

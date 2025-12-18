@@ -3,8 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 import { TaskFormComponent } from '../task-form/task-form.component';
-import { Task } from '../task.model';
-import { TaskStorageService } from '../../../shared/task-storage/task-storage.service';
+import { Task } from '../../../domain/entities/task-rule.entity';
+import { TaskStorageService } from '../../../core/services/task-storage/task-storage.service';
 
 @Component({
   selector: 'app-task-edit',

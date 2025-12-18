@@ -12,7 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSliderModule} from '@angular/material/slider';
 
-import {Task, TaskPriority} from '../task.model';
+import {Task, TaskPriority} from '../../../domain/entities/task-rule.entity';
 
 export function dateRangeValidator(): ValidatorFn {
 
