@@ -28,12 +28,10 @@ jobs:
         run: npm ci
 
       # Flags explicadas:
-      # --no-watch: Roda uma vez e para (não fica esperando mudanças)
-      # --no-progress: Não enche o log de barra de progresso
-      # --browsers=ChromeHeadless: Roda sem abrir janela visual
-      # --code-coverage: Gera o arquivo lcov.info que o Sonar precisa
+      # --coverage: Gera o arquivo lcov.info que o Sonar precisa
+      # --ci: Otimiza o Jest para rodar em servidores (menos logs, sem interatividade)
       - name: Rodar Testes Unitários
-        run: npm run test -- --no-watch --no-progress --browsers=ChromeHeadless --code-coverage
+        run: npm run test -- --coverage --ci
 
       - name: Configurar Java 21
         uses: actions/setup-java@v4
@@ -45,4 +43,4 @@ jobs:
         uses: SonarSource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
