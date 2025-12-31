@@ -1,7 +1,5 @@
-import {Component, computed, inject, Signal, signal} from '@angular/core';
+import {Component, computed, inject, Signal, signal, WritableSignal} from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { TaskStorageService } from '../../../core/services/task-storage/task-storage.service';
-import { Task, TaskStatus } from '../../../domain/entities/task-rule.entity';
 
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,12 +12,15 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { TaskListItemComponent } from './task-list-item.component';
 import { AddTaskButtonComponent } from './add-task-button.component';
 
+import { TaskFacade } from '../../../core/facades/task.facade';
+import { TaskRule } from '../../../domain/entities/task-rule.entity';
+import { TaskStatus } from '../../../domain/entities/task-types.entity';
+
 @Component({
   selector: 'app-task-list',
   standalone: true,
   imports: [
     CommonModule,
-    DatePipe,
 
     MatChipsModule,
     MatIconModule,
@@ -41,100 +42,139 @@ import { AddTaskButtonComponent } from './add-task-button.component';
 
 export class TaskListComponent {
 
-  private taskService = inject(TaskStorageService);
-  private datePipe = inject(DatePipe);
+  private taskFacade : TaskFacade = inject(TaskFacade);
+  private datePipe : DatePipe = inject(DatePipe);
 
-  categories = this.taskService.availableCategories;
+  protected readonly TaskStatus = TaskStatus;
 
-  selectedStatus = signal<TaskStatus>('Pendente'); // O signal para o filtro ativo agora pode ser inicializado com o valor que queremos.
-  selectedCategory = signal<string>('Todos');
-  selectedDate = signal<Date>(new Date()); // Começa com data atual
+  selectedStatus : WritableSignal<TaskStatus> = signal<TaskStatus>(TaskStatus.PENDING);
+  selectedTagId : WritableSignal<string> = signal<string>('ALL');
+  selectedDate : WritableSignal<Date> = signal<Date>(new Date());
 
-  private tasksForSelectedDate: Signal<Task[]>;
+  private allTasks : WritableSignal<TaskRule[]> = this.taskFacade.tasks;
 
-  constructor() {
-    this.tasksForSelectedDate = this.taskService.getTasksForDate(this.selectedDate);  // O serviço nos devolve um novo signal que já é reativo à nossa data selecionada.
+  // @TODO: Futuramente, isso virá preenchido pelo Backend (TaskHistory).
+  completedTaskIds : WritableSignal<Set<string>> = signal<Set<string>>(new Set<string>());
+
+  // @TODO Mock de Categorias (Depois virá do TagFacade)
+  availableTags : WritableSignal<string[]> = signal(['Trabalho', 'Estudos', 'Casa']);
+
+  ngOnInit(): void {
+    // @TODO: Quando tivermos Auth, pegaremos o ID real do usuário logado.
+    this.taskFacade.loadTasks('1');
   }
 
-  private tasksFilteredByCategory = computed(() => {
+  isTaskCompleted(taskId: string): boolean {
+    return this.completedTaskIds().has(taskId);
+  }
 
-    const tasks = this.tasksForSelectedDate();
-    const categoryFilter = this.selectedCategory();
+  async onToggleTask(task: TaskRule, isChecked: boolean): Promise<void> {
+    const newStatus = isChecked ? TaskStatus.COMPLETED : TaskStatus.PENDING;
+
+    this.updateLocalStatus(task.id, isChecked);
+
+    try {
+      await this.taskFacade.toggleTaskStatus(task.id, newStatus);
+    } catch (error) {
+      console.error('Erro ao salvar status, revertendo...', error);
+      this.updateLocalStatus(task.id, !isChecked);
+    }
+  }
+
+  private updateLocalStatus(taskId: string, isCompleted: boolean) : void {
+    this.completedTaskIds.update(currentSet => {
+      const newSet = new Set(currentSet);
+      if (isCompleted) {
+        newSet.add(taskId);
+      } else {
+        newSet.delete(taskId);
+      }
+      return newSet;
+    });
+  }
+
+  private filteredTasks : Signal<TaskRule[]> = computed(() => {
+
+    const tasks : TaskRule[] = this.allTasks();
+    const tagFilter : string = this.selectedTagId();
+    const statusFilter : TaskStatus = this.selectedStatus();
+    const completedSet : Set<string> = this.completedTaskIds();
 
     return tasks.filter(task => {
-      if (categoryFilter === 'Todos') return true;
+      const matchesTag : boolean = tagFilter === 'ALL' || task.tagId === tagFilter;
 
-      return task.category === categoryFilter;
-    }); // fim 'tasks.filter'
+      const isCompleted : boolean = completedSet.has(task.id);
+      let matchesStatus : boolean = true;
 
-  }); // fim 'tasksFilteredByCategory'
+      if (statusFilter === TaskStatus.PENDING) {
+        matchesStatus = !isCompleted;
+      } else if (statusFilter === TaskStatus.COMPLETED) {
+        matchesStatus = isCompleted;
+      }
+
+      return matchesTag && matchesStatus;
+    });
+
+  });
 
   tasksCount = computed(() => {
-    const tasks = this.tasksFilteredByCategory();
+    const tasks : TaskRule[] = this.allTasks();
+    const completedSet : Set<string> = this.completedTaskIds();
+
+    const total : number = tasks.length;
+    const completed : number = tasks.filter(t => completedSet.has(t.id)).length;
 
     return {
-      pendentes: tasks.filter(t => t.status === 'Pendente').length,
-      concluidas: tasks.filter(t => t.status === 'Completa').length,
-      perdidas: tasks.filter(t => t.status === 'Perdida').length
-    }
-  }); // fim 'tasksCount'
+      pendentes: total - completed,
+      concluidas: completed,
+      perdidas: 0 // @TODO Configurar essa verificação e mudança de status das tarefas pra perdida no firebase
+    };
+
+  });
 
   displayDate = computed(() => {
     const today = new Date();
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    if (today.toDateString() === this.selectedDate().toDateString()) {
-      return 'Hoje';
-    }
-    else if (tomorrow.toDateString() === this.selectedDate().toDateString()) {
-      return 'Amanhã';
-    }
-    else {
-      return this.datePipe.transform(this.selectedDate(), 'dd/MM');
-    }
-  }); // fim 'displayDate'
+    if (today.toDateString() === this.selectedDate().toDateString()) return 'Hoje';
+
+    else if (tomorrow.toDateString() === this.selectedDate().toDateString()) return 'Amanhã';
+
+    else return this.datePipe.transform(this.selectedDate(), 'dd/MM') || '';
+
+  });
 
 
   groupedTasks = computed(() => {
 
-    const tasks = this.tasksFilteredByCategory();
-    const statusFilter = this.selectedStatus();
+    const tasks : TaskRule[] = this.filteredTasks();
 
-    const filteredTasks = tasks.filter(task => // Filtra por status
-      task.status === statusFilter
-    );
+    const grouped = tasks.reduce((collection, task) => {
 
+      const tag : string = task.tagId || 'NONE';
 
-    // Agrupa o resultado final após ter sido filtrado por data, categoria e status.
-    const grouped = filteredTasks.reduce((collection, task) => {
+      if (!collection[tag]) collection[tag] = [];
 
-      const category = task.category; // categoria da tarefa atual
+      collection[tag].push(task);
 
-      if (!collection[category]) {
-        collection[category] = []; // Cria a "caixa" da categoria se ela não existir. Ex.: collection['Trabalho'] = []
-      }
+      return collection;
 
-      collection[category].push(task); // Coloca a "peça" (task) atual na caixa correta, ex.: collection['Trabalho'].push(task). Agora o collection é { Trabalho: [ { name: 'Relatório', ... } ] }.
-      return collection; // Devolve as caixas para a próxima rodada
+    }, {} as Record<string, TaskRule[]>);
 
-    }, {} as Record<string, Task[]>); // Começamos com um conjunto de caixas vazio
-
-    return Object.entries(grouped); // converte esse objeto em um array para que o Angular possa percorrê-lo facilmente no template.
+    return Object.entries(grouped);
   });
 
-  changeDate(event: MatDatepickerInputEvent<Date>) : void {
-    if (event.value) {
-      this.selectedDate.set(event.value);
-    }
+
+  changeDateFilter(event: MatDatepickerInputEvent<Date>) : void {
+    if (event.value) this.selectedDate.set(event.value);
   }
 
-  changeCategory(category: string) : void {
-    this.selectedCategory.set(category);
+  changeTagFilter(tagId: string) : void {
+    this.selectedTagId.set(tagId);
   }
 
-
-  changeFilter(filter: TaskStatus) {
+  changeStatusFilter(filter: TaskStatus) : void {
     this.selectedStatus.set(filter);
   }
 }

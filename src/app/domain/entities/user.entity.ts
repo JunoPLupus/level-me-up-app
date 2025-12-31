@@ -10,4 +10,5 @@ export interface User {
   levelInfo           : UserLevelInfo;
   levelConfiguration  : LevelConfiguration;
   skillIds           ?: string[];
+  tagIds             ?: string[];
 }

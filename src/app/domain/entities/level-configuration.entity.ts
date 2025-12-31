@@ -1,10 +1,10 @@
 export interface LevelConfiguration {
-  mode: 'FORMULA' | 'CUSTOM_TABLE';
+  mode              : 'FORMULA' | 'CUSTOM_TABLE';
 
-  formulaParams?: {
-    baseXp: number;
-    multiplier: number;
+  formulaParams    ?: {
+    baseXp          : number;
+    multiplier      : number;
   };
 
-  customThresholds?: Record<number, number>;
+  customThresholds ?: Record<number, number>;
 }

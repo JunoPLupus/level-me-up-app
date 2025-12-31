@@ -1,28 +1,22 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 
 import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatCheckboxModule, MatCheckboxChange } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
-import { MatCheckboxChange} from '@angular/material/checkbox';
 
-import { Task } from '../../../domain/entities/task-rule.entity';
-import { TaskStorageService } from '../../../core/services/task-storage/task-storage.service';
+import { TaskRule } from '../../../domain/entities/task-rule.entity';
 import { RelativeDatePipe } from '../../../shared/pipes/relative-date.pipe';
-
 
 @Component({
   selector: 'app-task-list-item',
   standalone: true,
   imports: [
     CommonModule,
-    DatePipe,
-
     MatCardModule,
     MatCheckboxModule,
     MatIconModule,
-
     RelativeDatePipe
   ],
   providers: [
@@ -33,16 +27,17 @@ import { RelativeDatePipe } from '../../../shared/pipes/relative-date.pipe';
 })
 
 export class TaskListItemComponent {
-  // Recebe o objeto da tarefa do componente pai (task-list).
-  @Input() task!: Task; // '!' -> "Confia no pai, ele vai mandar o valor"
 
-  private taskService = inject(TaskStorageService); // Injeta o serviço para poder chamar seus métodos.
-  private router = inject(Router);
+  @Input({ required: true }) task!: TaskRule;
 
-  onStatusChange(event: { checked: boolean }): void { // Método chamado quando o estado do checkbox muda.
-    const newStatus = event.checked ? 'Completa' : 'Pendente';
+  @Input() isCompleted: boolean = false;
 
-    this.taskService.updateTaskStatus(this.task, newStatus);
+  @Output() statusToggle : EventEmitter<boolean> = new EventEmitter<boolean>();
+
+  private router: Router = inject(Router);
+
+  onStatusChange(event: MatCheckboxChange): void {
+    this.statusToggle.emit(event.checked);
   }
 
   navigateToDetail(): void {

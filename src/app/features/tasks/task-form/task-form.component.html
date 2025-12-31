@@ -1,99 +1,85 @@
-<form class="task-form-container" [formGroup]="taskForm" (ngSubmit)="onSubmit()">
+<form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="form-container">
 
-  <div class="form-header">
-    <button mat-icon-button type="button" aria-label="Voltar" (click)="goBack()">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <h1>{{ isEditMode ? 'Editar Tarefa' : 'Nova Tarefa' }}</h1>
-    <button mat-icon-button type="submit" [disabled]="taskForm.invalid" aria-label="Salvar tarefa">
-      <mat-icon>check</mat-icon>
-    </button>
-  </div> <!-- fim form-header -->
+  <mat-form-field appearance="outline">
+    <mat-label>Título</mat-label>
+    <input matInput formControlName="title" placeholder="Ex: Estudar Angular">
+    <mat-error *ngIf="taskForm.get('title')?.hasError('required')">Obrigatório</mat-error>
+  </mat-form-field>
 
   <mat-form-field appearance="outline">
     <mat-label>Tag</mat-label>
-    <mat-select formControlName="category">
-      @for(cat of categories; track cat) {
-        <mat-option [value]="cat">{{ cat }}</mat-option>
+    <mat-select formControlName="tagId">
+      @for (tag of tags; track tag.id) {
+        <mat-option [value]="tag.id">{{ tag.name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <div class="priority-section">
+    <label for="input-prioridade">Prioridade: <strong>{{ getPriorityLabel(taskForm.get('priority')?.value) }}</strong></label>
+    <mat-slider min="1" max="3" step="1" showTickMarks discrete [displayWith]="getPriorityLabel" >
+      <input matSliderThumb
+             formControlName="priority"
+             id="input-prioridade"
+             data-testid="input-prioridade">
+    </mat-slider>
+  </div>
+
+  <div class="date-row">
+    <mat-form-field appearance="outline">
+      <mat-label>Data Início</mat-label>
+      <input matInput [matDatepicker]="pickerStart" formControlName="startDate">
+      <mat-datepicker-toggle matIconSuffix [for]="pickerStart"></mat-datepicker-toggle>
+      <mat-datepicker #pickerStart></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="time-input">
+      <mat-label>Hora</mat-label>
+      <input matInput type="time" formControlName="startTime">
+    </mat-form-field>
+  </div>
+
+  <div class="date-row">
+    <mat-form-field appearance="outline">
+      <mat-label>Data Término</mat-label>
+      <input matInput [matDatepicker]="pickerEnd" formControlName="endDate">
+      <mat-datepicker-toggle matIconSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+      <mat-datepicker #pickerEnd></mat-datepicker>
+      <mat-error *ngIf="taskForm.errors?.['dateRange']">
+        Término anterior ao início
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="time-input">
+      <mat-label>Hora</mat-label>
+      <input matInput type="time" formControlName="endTime">
+    </mat-form-field>
+  </div>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Repetição</mat-label>
+    <mat-select formControlName="frequency">
+      @for (option of frequencyOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
       }
     </mat-select>
   </mat-form-field>
 
   <mat-form-field appearance="outline">
-    <mat-label>Tarefa</mat-label>
-    <input matInput formControlName="name" placeholder="Ex: Estudar Angular Signals">
+    <mat-label>Descrição</mat-label>
+    <textarea matInput formControlName="description" rows="3"></textarea>
   </mat-form-field>
 
-  <div class="priority-group">
-    <label>Prioridade: {{ formatPriorityLabel(taskForm.get('priority')?.value) }}</label>
-    <mat-slider min="1" max="3" step="1" discrete>
-      <input matSliderThumb formControlName="priority">
-    </mat-slider>
-  </div> <!-- fim priority-group -->
-
-  <div class="date-time-wrapper">
-    <mat-form-field appearance="outline">
-      <mat-label>Término</mat-label>
-      <input matInput [matDatepicker]="endDatePicker" formControlName="endDate" placeholder="Indefinido">
-      <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
-      <mat-datepicker #endDatePicker></mat-datepicker>
-    </mat-form-field>
-    <mat-form-field appearance="outline" class="time-field">
-      <mat-label>Hora</mat-label>
-      <input matInput type="time" formControlName="endTime">
-    </mat-form-field>
-  </div> <!-- fim date-time-wrapper -->
-
-  @if(taskForm.hasError('dateRange')) {
-    <mat-error>
-      A data de término não pode ser anterior à data de início.
-    </mat-error>
+  @if (!isEditMode) {
+    <div class="checkbox-row">
+      <mat-checkbox formControlName="keepAdding">Continuar adicionando</mat-checkbox>
+    </div>
   }
 
-  @if(showAdvanced()) {
-    <mat-form-field appearance="outline">
-      <mat-label>Observações (opcional)</mat-label>
-      <textarea matInput formControlName="description"></textarea>
-    </mat-form-field>
-
-    <div class="date-time-wrapper">
-      <mat-form-field appearance="outline">
-        <mat-label>Início</mat-label>
-        <input matInput [matDatepicker]="startDatePicker" formControlName="startDate">
-        <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
-        <mat-datepicker #startDatePicker></mat-datepicker>
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="time-field">
-        <mat-label>Hora</mat-label>
-        <input matInput type="time" formControlName="startTime">
-      </mat-form-field>
-    </div> <!-- fim date-time-wrapper -->
-
-    <mat-form-field appearance="outline">
-      <mat-label>Lembrete</mat-label>
-      <mat-select formControlName="reminder">
-        @for(rem of reminders; track rem) {
-          <mat-option [value]="rem">{{ rem }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Frequência de repetição</mat-label>
-      <mat-select formControlName="repetition">
-        @for(rep of repetition; track rep) {
-          <mat-option [value]="rep">{{ rep }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-  }
-
-  @if(!isEditMode) {
-    <mat-checkbox formControlName="keepAdding">Continuar adicionando tarefas.</mat-checkbox>
-
-    <button class="advanced-toggle" type="button" (click)="showAdvanced.set(!showAdvanced())">
-      {{ showAdvanced() ? 'Ver menos configurações' : 'Ver mais configurações' }}
-      <mat-icon>{{ showAdvanced() ? 'expand_less' : 'expand_more' }}</mat-icon>
+  <div class="actions">
+    <button type="button" mat-button (click)="goBack()">Cancelar</button>
+    <button type="submit" mat-raised-button color="primary" [disabled]="taskForm.invalid">
+      {{ isEditMode ? 'Salvar' : 'Criar' }}
     </button>
-  }
+  </div>
 </form>

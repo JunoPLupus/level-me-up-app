@@ -1,8 +1,23 @@
-@if (taskToEdit()) {
-  <app-task-form
-    [task]="taskToEdit()"
-    (save)="handleSave($event)">
-  </app-task-form>
-} @else {
-  <p>Carregando tarefa ou tarefa não encontrada...</p>
-}
+<div class="edit-container">
+
+  <h2>Editar Tarefa</h2>
+
+  @if (isLoading()) {
+    <div >
+      <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+      <p>Carregando dados...</p>
+    </div>
+  }
+
+  @else if (taskToEdit()) {
+    <app-task-form
+      [task]="taskToEdit()"
+      (save)="handleSave($event)">
+    </app-task-form>
+  }
+
+  @else {
+    <p>Erro ao carregar tarefa.</p>
+  }
+
+</div>

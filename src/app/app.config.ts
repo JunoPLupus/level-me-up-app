@@ -6,17 +6,18 @@ import { registerLocaleData } from '@angular/common';
 import localePt from '@angular/common/locales/pt';
 
 import { routes } from './app.routes';
+import { TaskRuleRepository } from './domain/repositories/task-rule.repository';
+import { TaskRuleRepositoryImpl } from './infrastructure/repositories/task-rule.repository.impl';
 
-registerLocaleData(localePt); // Importa e registra dados de formatação específicos do Português (nomes de meses, dias da semana, etc.).
+registerLocaleData(localePt);
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    //provideBrowserGlobalErrorListeners(),
-    //provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideAnimationsAsync(),
     provideNativeDateAdapter(),
-    { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' }, // Diz para o Angular Material usar o locale pt-BR para formatação de datas
-    { provide: LOCALE_ID, useValue: 'pt-BR' } // Diz para o Angular como um todo usar pt-BR
+    { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
+    { provide: LOCALE_ID, useValue: 'pt-BR' },
+    { provide: TaskRuleRepository, useClass: TaskRuleRepositoryImpl }
   ]
 };

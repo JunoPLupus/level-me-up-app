@@ -1,39 +1,41 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TaskFormComponent } from '../task-form/task-form.component';
-import { Task } from '../../../domain/entities/task-rule.entity';
-import { TaskStorageService } from '../../../core/services/task-storage/task-storage.service';
+import { TaskRule } from '../../../domain/entities/task-rule.entity';
+import { TaskFacade } from '../../../core/facades/task.facade';
+import { TaskFormOutput } from '../../../domain/entities/task-types.entity';
 
 @Component({
   selector: 'app-task-add',
   standalone: true,
   imports: [
-    TaskFormComponent // Importamos nosso formulário reutilizável
+    TaskFormComponent
   ],
   templateUrl: './task-add.component.html',
-  // Não precisamos de um arquivo .scss para este componente simples
 })
+
 export class TaskAddComponent {
-  private taskService = inject(TaskStorageService);
-  private router = inject(Router);
+  private taskFacade : TaskFacade = inject(TaskFacade);
+  private router : Router = inject(Router);
 
   /**
-   * Este método é chamado quando o componente filho (task-form)
-   * emite o evento (save).
-   * @param taskData Os dados da tarefa vindos do formulário.
+   * @param formOutput Os dados da tarefa vindos do formulário (task-form).
    */
-  handleSave(taskData: Task): void {
-    // Remove o ID, pois o serviço irá gerar um novo.
-    // Omit<Task, 'id'> é um tipo que representa a Task sem o campo 'id'.
-    const { id, ...newTaskData } = taskData;
+  async handleSave(formOutput : TaskFormOutput): Promise<void> {
 
-    this.taskService.addTask(newTaskData as Omit<Task, 'id' | 'status'>);
+    const { keepAdding, id, ...taskData } = formOutput;
 
-    // Se a opção "continuar adicionando" NÃO estiver marcada no formulário,
-    // navega de volta para a lista principal.
-    // O formulário já tem um campo 'keepAdding' que podemos verificar.
-    if (!taskData['keepAdding' as keyof Task]) {
-      this.router.navigate(['/tasks']);
+    try {
+      await this.taskFacade.create(taskData as TaskRule);
+
+      if (!keepAdding) {
+        await this.router.navigate(['/tasks']);
+      } else {
+        console.log('Tarefa criada! O formulário será limpo automaticamente pelo componente filho.');
+      }
+
+    } catch (error) {
+      console.error('Erro ao criar tarefa:', error);
     }
   }
 }

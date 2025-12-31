@@ -1,21 +1,23 @@
-<mat-card (click)="navigateToDetail()">
+<mat-card (click)="navigateToDetail()"
+          (keydown.enter)="navigateToDetail()"
+          tabindex="0">
   <div class="task-content">
 
     <div class="task-details">
-      <p class="task-name">{{ task.name }}</p>
+      <p class="task-name">{{ task.title }}</p>
 
       <div class="task-meta">
-        @if (task.repetition !== 'Nenhuma') {
+        @if (task.frequency !== 'NONE') {
           <span class="meta-item">
             <mat-icon>sync</mat-icon>
-            <span>{{ task.repetition }}</span>
+            <span>{{ task.frequency }}</span>
           </span>
         }
 
         @if (task.endDate) {
           <span class="meta-item">
             <mat-icon>schedule</mat-icon>
-            <span>{{ task.endDate | relativeDate }}</span> <!--Exibe a data formatada pelo pipe 'relativeDate'-->
+            <span>{{ task.endDate | relativeDate }}</span>
           </span>
         }
 
@@ -23,9 +25,10 @@
     </div> <!-- fim task-details -->
 
     <mat-checkbox
-      [checked]="task.status === 'Completa'"
+      [checked]="isCompleted"
       (change)="onStatusChange($event)"
       (click)="$event.stopPropagation()"
+      (keydown.enter)="$event.stopPropagation()"
       aria-label="Marcar tarefa como concluída">
     </mat-checkbox>
 

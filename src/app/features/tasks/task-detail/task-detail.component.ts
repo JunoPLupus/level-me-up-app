@@ -1,13 +1,15 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import {Component, inject, OnInit, signal, WritableSignal} from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { Task } from '../../../domain/entities/task-rule.entity';
-import { TaskStorageService } from '../../../core/services/task-storage/task-storage.service';
+import { TaskRule } from '../../../domain/entities/task-rule.entity';
+import { TaskFacade } from '../../../core/facades/task.facade';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+
 
 @Component({
   selector: 'app-task-detail',
@@ -17,11 +19,11 @@ import { MatChipsModule } from '@angular/material/chips';
     RouterLink,
     DatePipe,
 
-    // Módulos do Material
     MatCardModule,
     MatIconModule,
     MatButtonModule,
-    MatChipsModule
+    MatChipsModule,
+    MatProgressSpinner
   ],
   templateUrl: './task-detail.component.html',
   styleUrl: './task-detail.component.scss'
@@ -29,22 +31,33 @@ import { MatChipsModule } from '@angular/material/chips';
 
 export class TaskDetailComponent implements OnInit {
 
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
-  private taskService = inject(TaskStorageService);
+  private route : ActivatedRoute = inject(ActivatedRoute);
+  private router : Router = inject(Router);
+  private taskFacade : TaskFacade = inject(TaskFacade);
 
-  // Signal para armazenar os dados da tarefa a ser exibida.
-  task = signal<Task | undefined>(undefined);
+  task: WritableSignal<TaskRule | undefined> = signal<TaskRule | undefined>(undefined);
+  isLoading : WritableSignal<boolean> = signal(true);
 
   ngOnInit(): void {
     const taskId = this.route.snapshot.paramMap.get('id');
 
     if (taskId) {
-      const foundTask = this.taskService.getTaskOrOccurrenceById(taskId);
-      this.task.set(foundTask);
+      this.taskFacade.getById(taskId).subscribe({
+        next: (foundTask) => {
+          if (foundTask) {
+            this.task.set(foundTask);
+          } else {
+            this.router.navigate(['/tasks']);
+          }
+          this.isLoading.set(false);
+        },
+        error: (err) => {
+          console.error('Erro ao buscar tarefa', err);
+          this.isLoading.set(false);
+        }
+      });
 
     } else {
-      // Se não houver ID, volta para a lista.
       this.router.navigate(['/tasks']);
     }
   }

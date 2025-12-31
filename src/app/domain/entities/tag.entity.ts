@@ -1,6 +1,6 @@
 export interface Tag {
-  id: string;
-  userId: string;
-  name: string;
-  colorHex: string;
+  id       : string;
+  userId   : string;
+  name     : string;
+  colorHex : string;
 }

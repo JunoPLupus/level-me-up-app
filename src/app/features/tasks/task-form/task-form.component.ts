@@ -1,7 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output, inject, signal } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule, Location } from '@angular/common';
-import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -12,47 +11,22 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSliderModule} from '@angular/material/slider';
 
-import {Task, TaskPriority} from '../../../domain/entities/task-rule.entity';
-
-export function dateRangeValidator(): ValidatorFn {
-
-  return (form: AbstractControl): ValidationErrors | null => {
-
-    const startDate = form.get('startDate')?.value;
-    const startTime = form.get('startTime')?.value;
-    const endDate = form.get('endDate')?.value;
-    const endTime = form.get('endTime')?.value;
-
-    if ( !startDate || !startTime || !endDate ) { // A validação só acontece se tivermos uma data de início e uma de término.
-      return null; // Não há erro se a data de término não for preenchida.
-    }
-
-    // Construindo o objeto Date completo para o `Início`
-    const startDateTime = new Date(startDate);
-    const [startHours, startMinutes] = startTime.split(':').map(Number);
-    startDateTime.setHours(startHours, startMinutes);
-
-    // Construindo o objeto Date completo para o `Término`
-    const endDateTime = new Date(endDate);
-    const finalEndTime = endTime || '23:59'; // Se a hora de término não foi preenchida, usa 23:59 como padrão para a validação.
-    const [endHours, endMinutes] = finalEndTime.split(':').map(Number);
-    endDateTime.setHours(endHours, endMinutes);
-
-    // Compara os objetos Date completos
-    if (startDateTime > endDateTime) {
-      return { dateRange: true }; // Retorna erro se o início for depois do fim.
-    }
-
-    return null; // Retorna null se a validação passar.
-  };
-}
+import { TaskRule } from '../../../domain/entities/task-rule.entity';
+import { Priority, Frequency, TaskFormOutput, Difficulty } from '../../../domain/entities/task-types.entity';
+import { dateRangeValidator } from '../../../shared/validators/date-range.validator';
+import {
+  FREQUENCY_OPTIONS,
+  getSliderValueFromPriority,
+  PRIORITY_UI_CONFIG
+} from '../../../shared/utils/task-ui.constants';
+import { formatTimeForInput } from '../../../shared/utils/date.utils';
 
 @Component({
   selector: 'app-task-form',
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule, // Essencial para formulários reativos
+    ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -68,92 +42,79 @@ export function dateRangeValidator(): ValidatorFn {
 
 export class TaskFormComponent implements OnInit {
 
-  @Input() task?: Task; // Recebe uma tarefa existente para o modo de edição. É opcional.
+  @Input() task?: TaskRule;
+  @Output() save : EventEmitter<TaskFormOutput> = new EventEmitter<TaskFormOutput>();
 
-  @Output() save = new EventEmitter<Task>(); // Emite o objeto da tarefa (novo ou atualizado) quando o formulário é salvo.
+  private formBuilder : FormBuilder = inject(FormBuilder);
+  private locationService : Location = inject(Location);
 
-  // --- Injeção de Dependências ---
-  private fb = inject(FormBuilder);
-  private locationService = inject(Location);  // <-- Injeta o serviço Location
+  readonly frequencyOptions = FREQUENCY_OPTIONS;
 
-  // --- Estado Interno do Componente ---
   taskForm!: FormGroup;
-  isEditMode = false;
-  showAdvanced = signal(false);
+  isEditMode : boolean = false;
+  showAdvanced : WritableSignal<boolean> = signal(false);
 
-  // Dados para os selects do formulário
-  categories = ['Estudos', 'Trabalho', 'Casa'];
-  reminders = ['Nenhum', '30m', '1h', '1d', '1w'];
-  repetition = ['Nenhuma', 'Diária', 'Semanal', 'Mensal'];
+  // Mock de Tags (@TODO remover quando tiver TagFacade)
+  tags = [
+    { id: 'tag-1', name: 'Estudos' },
+    { id: 'tag-2', name: 'Trabalho' },
+    { id: 'tag-3', name: 'Casa' }
+  ];
 
   ngOnInit(): void {
-    this.isEditMode = !!this.task; // Define se está em modo de edição
+    this.isEditMode = !!this.task;
     if (this.isEditMode) {
-      this.showAdvanced.set(true); // No modo de edição, sempre mostra campos avançados
+      this.showAdvanced.set(true);
     }
     this.initForm();
   }
 
-
-
-  formatPriorityLabel(value: number): TaskPriority {
-    if (value === 2) return 'Média';
-    if (value === 3) return 'Alta';
-
-    return 'Baixa'; // Se não for Média nem Alta, retorna Baixa
-  }
-
-  private formatTime(date:Date | undefined | null): string {  // Função para extrair a hora de um objeto Date no formato "HH:mm"
-    if (!date) return '';
-
-    return new Date(date).toTimeString().slice(0, 5); // new Date(date) cria uma cópia para não modificar o original
-  }
-
   private initForm(): void {
-    // Mapeia a prioridade de texto para número
-    const priorityMap: { [key: string]: number } = { 'Baixa': 1, 'Média': 2, 'Alta': 3 };
-    const initialPriorityValue = this.task ? priorityMap[this.task.priority] : 1;
-    const initialStartTime = this.formatTime(this.task?.startDate || new Date());
 
-    this.taskForm = this.fb.group({
-      // O valor inicial de cada campo depende se estamos editando ou criando
-      name: [this.task?.name || '', Validators.required],
-      category: [this.task?.category || 'Estudos', Validators.required],
+    const sliderValue = this.task
+      ? getSliderValueFromPriority(this.task.priority)
+      : 1;
+
+    const initialStartTime = formatTimeForInput(this.task?.startDate || new Date());
+
+    this.taskForm = this.formBuilder.group({
+      title: [this.task?.title || '', Validators.required],
+      tagId: [this.task?.tagId || '', Validators.required],
       description: [this.task?.description || ''],
-      priority: [initialPriorityValue, Validators.required],
 
-      startDate: [this.task?.startDate || new Date(), Validators.required], // A data de início é obrigatória
-      endDate: [this.task?.endDate || null],
+      priority: [sliderValue, Validators.required],
 
+      startDate: [this.task?.startDate || new Date(), Validators.required],
       startTime: [initialStartTime, Validators.required],
-      endTime: [this.formatTime(this.task?.endDate)],
 
-      reminder: [this.task?.reminder || 'Nenhum', Validators.required],
-      repetition: [this.task?.repetition || 'Nenhuma', Validators.required],
+      endDate: [this.task?.endDate || null],
+      endTime: [formatTimeForInput(this.task?.endDate)],
 
-      keepAdding: [false] // Este campo controla a checkbox "continuar adicionando"
+      frequency: [this.task?.frequency || Frequency.NONE, Validators.required],
+
+      keepAdding: [false]
     }, {
-      validators: dateRangeValidator() // Adiciona o validador customizado ao grupo de formulários
+      validators: dateRangeValidator()
     });
   }
 
+  getPriorityLabel(sliderValue: number): string {
+    return PRIORITY_UI_CONFIG[sliderValue as keyof typeof PRIORITY_UI_CONFIG]?.label || 'Baixa';
+  }
 
   goBack(): void {
     this.locationService.back();
   }
 
   onSubmit(): void {
-    if (this.taskForm.invalid) {
-      return; // Impede o envio se o formulário for inválido
-    }
-
+    if (this.taskForm.invalid) return;
     const formValue = this.taskForm.value;
 
     const startDate = new Date(formValue.startDate);
     const [startHours, startMinutes] = formValue.startTime.split(':').map(Number);
     startDate.setHours(startHours, startMinutes);
 
-    let endDate: Date | null = null;
+    let endDate: Date | undefined = undefined;
     if (formValue.endDate) {
       endDate = new Date(formValue.endDate);
       if (formValue.endTime) {
@@ -164,42 +125,55 @@ export class TaskFormComponent implements OnInit {
       }
     }
 
-    // Converte o valor numérico do slider de volta para texto antes de salvar
-    const priorityText = this.formatPriorityLabel(formValue.priority);
+    const priorityEnum = this.getPriorityConfig(formValue.priority)?.value || Priority.LOW;
 
 
-    // Monta o objeto da tarefa para ser emitido
-    const taskData: Task = {
-      // Se estiver em modo de edição, mantém o ID e status originais
-      id: this.task?.id || '', // O ID real será gerado no service
-      status: this.task?.status || 'Pendente',
-      name: formValue.name,
-      category: formValue.category,
+    const output: TaskFormOutput = {
+      id: this.task?.id,
+      title: formValue.title,
       description: formValue.description,
-      priority: priorityText,
-      reminder: formValue.reminder || 'Nenhum',
-      repetition: formValue.repetition || 'Nenhuma',
-
+      tagId: formValue.tagId,
+      priority: priorityEnum,
+      frequency: formValue.frequency,
       startDate: startDate,
-      endDate: endDate || undefined, // Se endDate for null, define como undefined para o caso de tarefas sem data de término
+      endDate: endDate,
+      instanceEndTime: undefined,
+
+      difficulty: this.task?.difficulty || Difficulty.EASY,
+      xpReward: this.task?.xpReward || 10, // @TODO Alterar esse '10' depois que tivermos a 'calculadora de xp'
+      isXpManual: this.task?.isXpManual || false,
+      skillIds: this.task?.skillIds || [],
+
+      keepAdding: formValue.keepAdding
     };
 
-    this.save.emit(taskData);
+    this.save.emit(output);
 
-    // Se a opção "continuar adicionando" estiver marcada, reseta o formulário
     if (formValue.keepAdding) {
-      this.taskForm.reset({
-        name: '',
-        description: '',
-        category: 'Estudos',
-        priority: 'Baixa',
-        startDate: new Date(),
-        endDate: null,
-        reminder: 'Nenhum',
-        repetition: 'Nenhuma',
-        keepAdding: true // Mantém a opção marcada
-      });
+      this.resetFormKeepAdding();
     }
+  }
+
+  private getPriorityConfig(sliderValue: number) {
+    return PRIORITY_UI_CONFIG[sliderValue as keyof typeof PRIORITY_UI_CONFIG];
+  }
+
+  private resetFormKeepAdding() : void {
+    this.taskForm.reset({
+      title: '',
+      description: '',
+      tagId: this.taskForm.get('tagId')?.value,
+      priority: 1,
+      startDate: new Date(),
+      startTime: formatTimeForInput(new Date()),
+
+      frequency: Frequency.NONE,
+      keepAdding: true
+    });
+
+    Object.keys(this.taskForm.controls).forEach(key => {
+      this.taskForm.get(key)?.setErrors(null);
+    });
   }
 
 }

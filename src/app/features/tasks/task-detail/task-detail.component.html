@@ -6,54 +6,59 @@
       </button>
       <span class="header-title">Detalhes</span>
       <div>
-        <button mat-icon-button aria-label="Gerenciar modelos (não implementado)">
-          <mat-icon>content_copy</mat-icon>
-        </button>
         <button mat-icon-button [routerLink]="['/tasks/edit', currentTask.id]" aria-label="Editar tarefa">
           <mat-icon>edit</mat-icon>
         </button>
       </div>
     </div>
 
-    <mat-card class="detail-content">
-      <mat-card-header>
-        <mat-card-title class="task-main-title">
-          {{ currentTask.name }}
-        </mat-card-title>
-        <mat-card-subtitle>
-          <mat-chip-set>
-            <mat-chip selected color="primary">{{ currentTask.category }}</mat-chip>
-          </mat-chip-set>
-        </mat-card-subtitle>
-      </mat-card-header>
+    @if (isLoading()) {
+      <div class="loading-container">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Carregando tarefa...</p>
+      </div>
+    }
 
-      <mat-card-content>
-        @if(currentTask.description) {
-          <p class="task-description">{{ currentTask.description }}</p>
-        }
+    @else if (task(); as currentTask) {
+      <mat-card class="detail-content">
+        <mat-card-header>
+          <mat-card-title class="task-main-title">
+            {{ currentTask.title }}
+          </mat-card-title>
+          <mat-card-subtitle>
+            <mat-chip-set>
+              <mat-chip selected color="primary">{{ currentTask.tagId }}</mat-chip>
+            </mat-chip-set>
+          </mat-card-subtitle>
+        </mat-card-header>
 
-        <ul class="info-list">
-          <li><mat-icon>flag</mat-icon><span>Prioridade {{ currentTask.priority }}</span></li>
-          <li><mat-icon>alarm</mat-icon><span>Lembrete: {{ currentTask.reminder }}</span></li>
-          <li><mat-icon>sync</mat-icon><span>Repetição: {{ currentTask.repetition }}</span></li>
-          <li>
-            <mat-icon>date_range</mat-icon>
-            <span>
-              {{ currentTask.startDate | date:'dd/MM HH:mm' }} →
-              {{ currentTask.endDate ? (currentTask.endDate | date:'dd/MM HH:mm') : 'Indefinido' }}
-            </span>
-          </li>
-        </ul>
+        <mat-card-content>
+          @if(currentTask.description) {
+            <p class="task-description">{{ currentTask.description }}</p>
+          }
 
-        <div class="stats-section">
-          <h3>Estatísticas de repetição</h3>
-          <div class="heatmap-placeholder">
-            <p>(Gráfico de calor a ser implementado)</p>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
+          <ul class="info-list">
+            <li><mat-icon>flag</mat-icon><span>Prioridade {{ currentTask.priority }}</span></li>
+            <li><mat-icon>sync</mat-icon><span>Repetição: {{ currentTask.frequency }}</span></li>
+            <li>
+              <mat-icon>date_range</mat-icon>
+              <span>
+                {{ currentTask.startDate | date:'dd/MM HH:mm' }} →
+                {{ currentTask.endDate ? (currentTask.endDate | date:'dd/MM HH:mm') : 'Indefinido' }}
+              </span>
+            </li>
+          </ul>
+
+        </mat-card-content>
+      </mat-card>
+    }
+
   </div>
+
 } @else {
-  <p>Tarefa não encontrada.</p>
+    <div class="not-found-container">
+      <mat-icon>error_outline</mat-icon>
+      <p>Tarefa não encontrada.</p>
+      <button mat-button color="primary" routerLink="/tasks">Voltar para a lista</button>
+    </div>
 }

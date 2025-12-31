@@ -59,6 +59,7 @@ Está sendo documentado através do Obsidian.
 Junto aos wireframes está sendo feito os diagramas usando o 'Miro':
 
 - ![Diagrama de Casos de Uso](docs/Diagrama-de-Casos-de-Uso.jpg)
+> *Nota: O código fonte deste diagrama está disponível em [docs/diagrams/src](./docs/diagrams/src).*
 
 ### 🎨 Wireframe
 ![Wireframe do App](docs/wireframe-task-app.jpg)
@@ -69,9 +70,10 @@ O projeto foi desenvolvido com base em um **wireframe** previamente planejado, u
 
 ## 🚀 Como Executar o Projeto
 > Pré-Requisitos:
-> - Node.js
+> - Node.js v20+
 > - Angular CLI
 > - Git
+> - Java 21 LTS (Necessário apenas para rodar o SonarQube)
 
 1. Acesse o terminal;  
 

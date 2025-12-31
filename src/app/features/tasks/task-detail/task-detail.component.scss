@@ -70,3 +70,34 @@
     color: #7a869a;
   }
 }
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 300px; /* Ou height: 100% se o pai tiver altura definida */
+  color: #666;
+  gap: 16px; /* Espaço entre o spinner e o texto */
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+}
+
+.not-found-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+  gap: 10px;
+  color: #666;
+
+  mat-icon {
+    font-size: 48px;
+    height: 48px;
+    width: 48px;
+    color: #f44336; // Vermelho de erro padrão do Material
+  }
+}
