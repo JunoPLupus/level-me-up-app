@@ -1,8 +1,7 @@
 import { Injectable, inject, signal, WritableSignal } from '@angular/core';
 import { TaskRule } from '../../domain/entities/task-rule.entity';
 import { TaskRuleRepository } from '../../domain/repositories/task-rule.repository';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { catchError, of } from 'rxjs';
+import { of } from 'rxjs';
 import { TaskStatus } from '../../domain/entities/task-types.entity';
 
 @Injectable({
@@ -11,8 +10,6 @@ import { TaskStatus } from '../../domain/entities/task-types.entity';
 
 export class TaskFacade {
   private repository : TaskRuleRepository = inject(TaskRuleRepository);
-
-  // tasks = toSignal(this.repository.getAll(), { initialValue: [] });
 
   readonly tasks : WritableSignal<TaskRule[]> = signal<TaskRule[]>([]);
 

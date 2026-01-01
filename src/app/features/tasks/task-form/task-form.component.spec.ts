@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideNativeDateAdapter } from '@angular/material/core';
 
 import { TaskFormComponent } from './task-form.component';
 
@@ -8,7 +9,10 @@ describe('TaskFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TaskFormComponent]
+      imports: [TaskFormComponent],
+      providers: [
+        provideNativeDateAdapter()
+      ]
     })
     .compileComponents();
 

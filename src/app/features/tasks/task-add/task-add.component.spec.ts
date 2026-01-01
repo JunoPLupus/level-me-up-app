@@ -1,6 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { provideNativeDateAdapter } from '@angular/material/core';
 
 import { TaskAddComponent } from './task-add.component';
+import { TaskRuleRepository } from '../../../domain/repositories/task-rule.repository';
+import { TaskRuleRepositoryImpl } from '../../../infrastructure/repositories/task-rule.repository.impl';
 
 describe('TaskAddComponent', () => {
   let component: TaskAddComponent;
@@ -8,7 +12,12 @@ describe('TaskAddComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TaskAddComponent]
+      imports: [TaskAddComponent],
+      providers: [
+        { provide: TaskRuleRepository, useClass: TaskRuleRepositoryImpl },
+        provideRouter([]),
+        provideNativeDateAdapter()
+      ]
     })
     .compileComponents();
 

@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { TaskDetailComponent } from './task-detail.component';
+import { TaskRuleRepository } from '../../../domain/repositories/task-rule.repository';
+import { TaskRuleRepositoryImpl } from '../../../infrastructure/repositories/task-rule.repository.impl';
 
 describe('TaskDetailComponent', () => {
   let component: TaskDetailComponent;
@@ -8,7 +11,11 @@ describe('TaskDetailComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TaskDetailComponent]
+      imports: [TaskDetailComponent],
+      providers: [
+        { provide: TaskRuleRepository, useClass: TaskRuleRepositoryImpl },
+        provideRouter([])
+      ]
     })
     .compileComponents();
 

@@ -5,10 +5,10 @@ import { NavBarComponent } from './shared/components/nav-bar/nav-bar.component';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavBarComponent],
+  imports: [ RouterOutlet, NavBarComponent ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  protected readonly title = signal('mobile-tasks-app');
+  protected readonly title = signal('level-me-up-app');
 }
