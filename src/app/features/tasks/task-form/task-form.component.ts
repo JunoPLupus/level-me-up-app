@@ -13,13 +13,13 @@ import { MatSliderModule} from '@angular/material/slider';
 
 import { TaskRule } from '../../../domain/entities/task-rule.entity';
 import { Priority, Frequency, TaskFormOutput, Difficulty } from '../../../domain/entities/task-types.entity';
-import { dateRangeValidator } from '../../../shared/validators/date-range.validator';
+import { dateRangeValidator } from '../../../shared/validators/forms/date-range.validator';
 import {
   FREQUENCY_OPTIONS,
   getSliderValueFromPriority,
   PRIORITY_UI_CONFIG
 } from '../../../shared/utils/task-ui.constants';
-import { formatTimeForInput } from '../../../shared/utils/date.utils';
+import { formatTimeForInput } from '../../../shared/utils/date-format.utils';
 
 @Component({
   selector: 'app-task-form',

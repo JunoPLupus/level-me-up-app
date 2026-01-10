@@ -2,6 +2,7 @@ import { Priority, Difficulty, Frequency } from './task-types.entity';
 
 export interface TaskRule {
   id               : string;
+  parentRuleId    ?: string;
   userId           : string;
 
   title            : string;
@@ -19,7 +20,6 @@ export interface TaskRule {
   instanceEndTime ?: Date;
   frequency        : Frequency;
 
-  isDeleted        : boolean;
   createdAt        : Date;
   updatedAt        : Date;
 }

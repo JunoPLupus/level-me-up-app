@@ -60,8 +60,7 @@ export class TaskListComponent {
   availableTags : WritableSignal<string[]> = signal(['Trabalho', 'Estudos', 'Casa']);
 
   ngOnInit(): void {
-    // @TODO: Quando tivermos Auth, pegaremos o ID real do usuário logado.
-    this.taskFacade.loadTasks('1');
+    this.taskFacade.loadTasks();
   }
 
   isTaskCompleted(taskId: string): boolean {

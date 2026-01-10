@@ -21,7 +21,6 @@ export class TaskRuleRepositoryImpl implements TaskRuleRepository {
       xpReward: 50,
       isXpManual: false,
       startDate: new Date(),
-      isDeleted: false,
       createdAt: new Date(),
       updatedAt: new Date()
     },
@@ -35,7 +34,6 @@ export class TaskRuleRepositoryImpl implements TaskRuleRepository {
       xpReward: 20,
       isXpManual: false,
       startDate: new Date(),
-      isDeleted: false,
       createdAt: new Date(),
       updatedAt: new Date()
     }
