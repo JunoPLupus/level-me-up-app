@@ -5,7 +5,9 @@ export interface User {
   uid                 : string;
   displayName         : string;
   email               : string;
-  photoUrl           ?: string;
+
+  photoGoogleUrl     ?: string;
+  photoPixelId       ?: string;
 
   levelInfo           : UserLevelInfo;
   levelConfiguration  : LevelConfiguration;
