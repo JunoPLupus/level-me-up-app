@@ -1,6 +1,6 @@
-import * as TextUtils from '../utils/text.utils';
-import * as DateUtils from '../utils/date.utils';
-import { TaskRule } from '../entities/task-rule.entity';
+import * as TextUtils from '../../utils/text.utils';
+import * as DateUtils from '../../utils/date.utils';
+import { TaskRule } from '../../entities/task-rule.entity';
 
 export class TaskValidator {
   static validate(task: TaskRule) {

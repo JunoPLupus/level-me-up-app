@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { TaskRule } from '../entities/task-rule.entity';
 import { TaskRuleRepository } from '../repositories/task-rule.repository';
-import { TaskValidator } from '../validators/task.validator';
+import { TaskValidator } from '../validators/task-validator/task.validator';
 
 @Injectable({
   providedIn: 'root'
