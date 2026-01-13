@@ -1,12 +1,20 @@
 import { inject, Injectable } from '@angular/core';
-import { Auth, user, signInWithEmailAndPassword, signOut, User as FirebaseUser } from '@angular/fire/auth';
+import {
+  Auth,
+  user,
+  signInWithEmailAndPassword,
+  signOut,
+  User as FirebaseUser,
+  signInWithPopup,
+  GoogleAuthProvider
+} from '@angular/fire/auth';
 import { Observable, map } from 'rxjs';
 
 import { User } from '../../../domain/entities/user.entity';
 import { AuthContract } from '../../../domain/interfaces/auth.contract';
 import { isEmpty } from '../../../domain/utils/text.utils';
-import {LevelConfiguration} from '../../../domain/entities/level-configuration.entity';
-import {UserLevelInfo} from '../../../domain/entities/user-level-info.entity';
+import { LevelConfiguration } from '../../../domain/entities/level-configuration.entity';
+import { UserLevelInfo } from '../../../domain/entities/user-level-info.entity';
 
 @Injectable({
   providedIn: 'root',
@@ -50,12 +58,23 @@ export class AuthService implements AuthContract {
     };
   }
 
-  login(email: string, password: string): Promise<void> {
-        throw new Error("Method not implemented.");
+  async loginWithEmailAndPassword(email: string, password: string): Promise<void> {
+
+    await signInWithEmailAndPassword(this.auth, email, password);
+
+    console.log('Login realizado com sucesso.');
   }
 
-  logout(): Promise<void> {
-      throw new Error("Method not implemented.");
+  async loginWithGoogle(): Promise<void> {
+
+    const googleProvider = new GoogleAuthProvider();
+
+    await signInWithPopup(this.auth, googleProvider);
+
+  }
+
+  async logout(): Promise<void> {
+    await signOut(this.auth);
   }
 
   isAuthenticated(): boolean {
@@ -63,7 +82,7 @@ export class AuthService implements AuthContract {
   }
 
   getUserId(): string | null {
-    return '1';
+    return this.auth.currentUser ? this.auth.currentUser.uid : null;
   }
 
   getValidUserId() : string {

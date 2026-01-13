@@ -1,17 +1,17 @@
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { User } from '../entities/user.entity';
 
 export interface AuthContract {
 
   currentUser$ : Observable<User | null>;
 
-  login(email: string, password: string) : Promise<void>;
+  loginWithEmailAndPassword(email: string, password: string) : Promise<void>;
+  loginWithGoogle() : Promise<void>;
 
   logout() : Promise<void>;
 
   isAuthenticated() : boolean;
 
   getUserId() : string | null;
-
   getValidUserId() : string;
 }
