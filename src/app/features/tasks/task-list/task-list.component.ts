@@ -12,7 +12,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { TaskListItemComponent } from './task-list-item.component';
 import { AddTaskButtonComponent } from './add-task-button.component';
 
-import { TaskFacade } from '../../../core/facades/task.facade';
+import { TaskFacade } from '../../../core/facades/task-facade/task.facade';
 import { TaskRule } from '../../../domain/entities/task-rule.entity';
 import { TaskStatus } from '../../../domain/entities/task-types.entity';
 

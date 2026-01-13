@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TaskFormComponent } from '../task-form/task-form.component';
 import { TaskRule } from '../../../domain/entities/task-rule.entity';
-import { TaskFacade } from '../../../core/facades/task.facade';
+import { TaskFacade } from '../../../core/facades/task-facade/task.facade';
 import { TaskFormOutput } from '../../../domain/entities/task-types.entity';
 
 @Component({

@@ -2,7 +2,7 @@ import {Component, inject, OnInit, signal, WritableSignal} from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TaskRule } from '../../../domain/entities/task-rule.entity';
-import { TaskFacade } from '../../../core/facades/task.facade';
+import { TaskFacade } from '../../../core/facades/task-facade/task.facade';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';

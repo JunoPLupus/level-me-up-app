@@ -1,12 +1,12 @@
 import { Injectable, inject, signal, WritableSignal } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { TaskRule } from '../../domain/entities/task-rule.entity';
-import { TaskRuleRepository } from '../../domain/repositories/task-rule.repository';
-import { TaskStatus } from '../../domain/entities/task-types.entity';
-import { CreateTaskUseCase } from '../../domain/use-cases/create-task.use-case';
-import { UpdateTaskUseCase } from '../../domain/use-cases/update-task.use-case';
-import { DeleteTaskUseCase } from '../../domain/use-cases/delete-task.use-case';
-import {AuthService} from '../services/auth/auth.service';
+import { TaskRule } from '../../../domain/entities/task-rule.entity';
+import { TaskRuleRepository } from '../../../domain/repositories/task-rule.repository';
+import { TaskStatus } from '../../../domain/entities/task-types.entity';
+import { CreateTaskUseCase } from '../../../domain/use-cases/create-task.use-case';
+import { UpdateTaskUseCase } from '../../../domain/use-cases/update-task.use-case';
+import { DeleteTaskUseCase } from '../../../domain/use-cases/delete-task.use-case';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
