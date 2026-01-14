@@ -18,7 +18,7 @@ import {
   FREQUENCY_OPTIONS,
   getSliderValueFromPriority,
   PRIORITY_UI_CONFIG
-} from '../../../shared/utils/task-ui.constants';
+} from '../../../shared/utils/task-ui-constants/task-ui.constants';
 import { formatTimeForInput } from '../../../shared/utils/date-format.utils';
 
 @Component({

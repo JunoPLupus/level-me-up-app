@@ -1,4 +1,4 @@
-import { Priority, Frequency } from '../../domain/entities/task-types.entity';
+import { Priority, Frequency } from '../../../domain/entities/task-types.entity';
 
 export const FREQUENCY_LABELS: Record<Frequency, string> = {
   [Frequency.NONE]: 'Nenhuma',
@@ -7,9 +7,11 @@ export const FREQUENCY_LABELS: Record<Frequency, string> = {
   [Frequency.MONTHLY]: 'Mensal'
 };
 
-export const FREQUENCY_OPTIONS = Object.entries(FREQUENCY_LABELS).map(([value, label]) => ({
-  value: value as Frequency,
-  label
+export const FREQUENCY_OPTIONS =
+  Object.entries(FREQUENCY_LABELS)
+    .map(([value, label]) => ({
+          value: value as Frequency,
+          label
 }));
 
 export const PRIORITY_UI_CONFIG = {
@@ -19,6 +21,8 @@ export const PRIORITY_UI_CONFIG = {
 };
 
 export function getSliderValueFromPriority(priority: Priority): number {
-  const entry = Object.entries(PRIORITY_UI_CONFIG).find(([_, config]) => config.value === priority);
+  const entry =
+    Object.entries(PRIORITY_UI_CONFIG)
+      .find(([_, config]) => config.value === priority);
   return entry ? Number(entry[0]) : 1;
 }

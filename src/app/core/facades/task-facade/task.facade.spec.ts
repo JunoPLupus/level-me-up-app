@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { TaskFacade } from './task.facade';
 import { AuthService } from '../../services/auth/auth.service';
-import { CreateTaskUseCase } from '../../../domain/use-cases/create-task.use-case';
-import { UpdateTaskUseCase } from '../../../domain/use-cases/update-task.use-case';
-import { DeleteTaskUseCase } from '../../../domain/use-cases/delete-task.use-case';
+import { CreateTaskUseCase } from '../../../domain/use-cases/task-use-cases/create-task-use-case/create-task.use-case';
+import { UpdateTaskUseCase } from '../../../domain/use-cases/task-use-cases/update-task-use-case/update-task.use-case';
+import { DeleteTaskUseCase } from '../../../domain/use-cases/task-use-cases/delete-task-use-case/delete-task.use-case';
 import { TaskRuleRepository } from '../../../domain/repositories/task-rule.repository';
 import { TaskRule } from '../../../domain/entities/task-rule.entity';
 import {Difficulty, Frequency, Priority, TaskStatus} from '../../../domain/entities/task-types.entity';

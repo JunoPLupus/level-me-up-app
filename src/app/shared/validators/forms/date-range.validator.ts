@@ -2,28 +2,28 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 export function dateRangeValidator(): ValidatorFn {
 
-  return (form: AbstractControl): ValidationErrors | null => {
+  return (formGroup: AbstractControl): ValidationErrors | null => {
 
-    const startDate = form.get('startDate')?.value;
-    const startTime = form.get('startTime')?.value;
-    const endDate = form.get('endDate')?.value;
-    const endTime = form.get('endTime')?.value;
+    const startDateStr = formGroup.get('startDate')?.value;
+    const startTimeStr = formGroup.get('startTime')?.value;
+    const endDateStr = formGroup.get('endDate')?.value;
+    const endTimeStr = formGroup.get('endTime')?.value;
 
-    if ( !startDate || !startTime || !endDate ) {
+    if ( !startDateStr || !startTimeStr || !endDateStr ) {
       return null;
     }
 
-    const startDateTime = new Date(startDate);
-    const [startHours, startMinutes] = startTime.split(':').map(Number);
-    startDateTime.setHours(startHours, startMinutes);
+    const startDateTime = new Date(startDateStr);
+    const [startHours, startMinutes] = startTimeStr.split(':').map(Number);
+    startDateTime.setHours(startHours, startMinutes, 0, 0);
 
-    const endDateTime = new Date(endDate);
-    const finalEndTime = endTime || '23:59';
+    const endDateTime = new Date(endDateStr);
+    const finalEndTime = endTimeStr || '23:59';
     const [endHours, endMinutes] = finalEndTime.split(':').map(Number);
-    endDateTime.setHours(endHours, endMinutes);
+    endDateTime.setHours(endHours, endMinutes, 0, 0);
 
     if (startDateTime > endDateTime) {
-      return { dateRange: true };
+      return { invalidDateRange: true };
     }
 
     return null;

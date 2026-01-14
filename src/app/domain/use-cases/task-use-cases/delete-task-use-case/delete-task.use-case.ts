@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom, Observable } from 'rxjs';
-import { TaskRule } from '../entities/task-rule.entity';
-import { TaskRuleRepository } from '../repositories/task-rule.repository';
+import { TaskRule } from '../../../entities/task-rule.entity';
+import { TaskRuleRepository } from '../../../repositories/task-rule.repository';
 
 @Injectable({
   providedIn: 'root'
