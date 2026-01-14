@@ -13,7 +13,7 @@ import { MatSliderModule} from '@angular/material/slider';
 
 import { TaskRule } from '../../../domain/entities/task-rule.entity';
 import { Priority, Frequency, TaskFormOutput, Difficulty } from '../../../domain/entities/task-types.entity';
-import { dateRangeValidator } from '../../../shared/validators/forms/date-range.validator';
+import { dateRangeValidator } from '../../../shared/validators/forms/date-range-validator/date-range.validator';
 import {
   FREQUENCY_OPTIONS,
   getSliderValueFromPriority,
