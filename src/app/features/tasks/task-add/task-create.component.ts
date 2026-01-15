@@ -6,15 +6,15 @@ import { TaskFacade } from '../../../core/facades/task-facade/task.facade';
 import { TaskFormOutput } from '../../../domain/entities/task-types.entity';
 
 @Component({
-  selector: 'app-task-add',
+  selector: 'app-task-create',
   standalone: true,
   imports: [
     TaskFormComponent
   ],
-  templateUrl: './task-add.component.html',
+  templateUrl: './task-create.component.html',
 })
 
-export class TaskAddComponent {
+export class TaskCreateComponent {
   private taskFacade : TaskFacade = inject(TaskFacade);
   private router : Router = inject(Router);
 
@@ -23,19 +23,25 @@ export class TaskAddComponent {
    */
   async handleSave(formOutput : TaskFormOutput): Promise<void> {
 
-    const { keepAdding, id, ...taskData } = formOutput;
+    const { keepAdding, id, ...rawTaskData } = formOutput;
+
+    const taskToCreate: TaskRule = {
+      ...rawTaskData
+    } as TaskRule;
 
     try {
-      await this.taskFacade.create(taskData as TaskRule);
+      await this.taskFacade.create(taskToCreate);
 
-      if (!keepAdding) {
-        await this.router.navigate(['/tasks']);
+      if (keepAdding) {
+        console.info('✨ Tarefa criada! Pronto para a próxima.');
+        // @TODO: aqui futuramente entra this.notificationService.success('...');
       } else {
-        console.log('Tarefa criada! O formulário será limpo automaticamente pelo componente filho.');
+        await this.router.navigate(['/tasks']);
       }
 
     } catch (error) {
-      console.error('Erro ao criar tarefa:', error);
+      console.error('❌ Erro crítico ao criar tarefa:', error);
+      // @TODO: aqui futuramente entra this.notificationService.error('Erro ao criar...');
     }
   }
 }

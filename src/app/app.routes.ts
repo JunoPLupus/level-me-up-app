@@ -10,7 +10,7 @@ export const routes: Routes = [
   {
     path: 'tasks/new',
     loadComponent: () =>
-      import('./features/tasks/task-add/task-add.component').then(m => m.TaskAddComponent)
+      import('./features/tasks/task-add/task-create.component').then(m => m.TaskCreateComponent)
   },
   {
     path: 'tasks/detail/:id',

@@ -2,17 +2,17 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { provideNativeDateAdapter } from '@angular/material/core';
 
-import { TaskAddComponent } from './task-add.component';
+import { TaskCreateComponent } from './task-create.component';
 import { TaskRuleRepository } from '../../../domain/repositories/task-rule.repository';
 import { TaskRuleRepositoryImpl } from '../../../infrastructure/repositories/task-rule.repository.impl';
 
 describe('TaskAddComponent', () => {
-  let component: TaskAddComponent;
-  let fixture: ComponentFixture<TaskAddComponent>;
+  let component: TaskCreateComponent;
+  let fixture: ComponentFixture<TaskCreateComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TaskAddComponent],
+      imports: [TaskCreateComponent],
       providers: [
         { provide: TaskRuleRepository, useClass: TaskRuleRepositoryImpl },
         provideRouter([]),
@@ -21,7 +21,7 @@ describe('TaskAddComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(TaskAddComponent);
+    fixture = TestBed.createComponent(TaskCreateComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
