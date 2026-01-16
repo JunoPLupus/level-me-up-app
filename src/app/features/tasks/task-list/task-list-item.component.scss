@@ -1,57 +1,145 @@
+// Variáveis de Cores (Idealmente estariam num styles.scss global)
+$bg-card: #1E1E1E;
+$bg-card-hover: #2C2C2C;
+$text-primary: #FFFFFF;
+$text-secondary: #B0B0B0;
+$accent-color: #8A4FFF;
+$accent-dim: rgba(138, 79, 255, 0.2);
+
 :host {
-  display: block; // Garante que o componente ocupe seu próprio espaço
+  display: block;
+  margin-bottom: 12px;
 }
 
-mat-card {
-  // Remove o padding padrão do mat-card para termos controle total
-  padding: 16px !important;
-  margin-bottom: 12px;
+.task-card {
+  display: flex;
+  align-items: center;
+  background-color: $bg-card;
+  border-radius: 12px;
+  padding: 16px;
+  transition: transform 0.2s, background-color 0.2s;
   cursor: pointer;
-  transition: box-shadow 0.2s ease-in-out;
+  border: 1px solid transparent;
 
   &:hover {
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    background-color: $bg-card-hover;
+    transform: translateY(-2px);
+    border-color: $accent-dim;
+  }
+
+  &.completed {
+    opacity: 0.6;
+    .task-title {
+      text-decoration: line-through;
+      color: $text-secondary;
+    }
+  }
+}
+
+.task-icon-area {
+  margin-right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .emoji {
+    font-size: 24px;
   }
 }
 
 .task-content {
+  flex: 1;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.task-details {
-  flex-grow: 1;
-}
-
-.task-name {
+.task-title {
+  margin: 0;
   font-size: 16px;
-  font-weight: 500;
-  margin: 0 0 8px 0;
+  font-weight: 600;
+  color: $text-primary;
+  line-height: 1.4;
 }
 
 .task-meta {
   display: flex;
-  align-items: center;
-  gap: 16px; // Espaço entre os ícones/textos
-  color: #6b778c; // Cor cinza para as metainformações
-  font-size: 14px;
-}
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 12px;
+  color: $text-secondary;
 
-.meta-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
 
-  mat-icon {
-    font-size: 18px;
-    // Ajusta a altura do ícone para alinhar com o texto
-    height: 18px;
-    width: 18px;
+  .mini-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
+
+  .xp-badge {
+    color: #FFD700;
   }
 }
 
-// Customiza o tamanho do checkbox para se adequar ao design mobile
-::ng-deep .mat-mdc-checkbox {
-  --mdc-checkbox-state-layer-size: 36px;
+
+.task-action {
+  margin-left: 12px;
+}
+
+.custom-checkbox {
+  display: block;
+  position: relative;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+
+  input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+
+  .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 24px;
+    width: 24px;
+    background-color: rgba(255,255,255, 0.1);
+    border-radius: 6px;
+    transition: all 0.2s ease;
+  }
+
+
+  &:hover input ~ .checkmark {
+    background-color: rgba(255,255,255, 0.2);
+  }
+
+  input:checked ~ .checkmark {
+    background-color: #8A4FFF;
+    border: none;
+  }
+
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+
+  input:checked ~ .checkmark:after {
+    display: block;
+  }
+
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
 }

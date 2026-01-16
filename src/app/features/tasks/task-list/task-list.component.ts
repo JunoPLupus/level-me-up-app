@@ -1,4 +1,4 @@
-import {Component, computed, inject, Signal, signal, WritableSignal} from '@angular/core';
+import { Component, computed, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 
 import { MatChipsModule } from '@angular/material/chips';

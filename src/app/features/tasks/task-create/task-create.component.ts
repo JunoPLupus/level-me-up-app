@@ -4,6 +4,7 @@ import { TaskFormComponent } from '../task-form/task-form.component';
 import { TaskRule } from '../../../domain/entities/task-rule.entity';
 import { TaskFacade } from '../../../core/facades/task-facade/task.facade';
 import { TaskFormOutput } from '../../../domain/entities/task-types.entity';
+import { AuthService } from '../../../core/services/auth/auth.service';
 
 @Component({
   selector: 'app-task-create',
@@ -16,6 +17,7 @@ import { TaskFormOutput } from '../../../domain/entities/task-types.entity';
 
 export class TaskCreateComponent {
   private taskFacade : TaskFacade = inject(TaskFacade);
+  private authService = inject(AuthService);
   private router : Router = inject(Router);
 
   /**
@@ -25,8 +27,11 @@ export class TaskCreateComponent {
 
     const { keepAdding, id, ...rawTaskData } = formOutput;
 
+    const currentUserId = this.authService.getValidUserId();
+
     const taskToCreate: TaskRule = {
-      ...rawTaskData
+      ...rawTaskData,
+      userId: currentUserId,
     } as TaskRule;
 
     try {

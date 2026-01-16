@@ -1,37 +1,43 @@
-<mat-card (click)="navigateToDetail()"
-          (keydown.enter)="navigateToDetail()"
-          tabindex="0">
-  <div class="task-content">
 
-    <div class="task-details">
-      <p class="task-name">{{ task.title }}</p>
+  <article class="task-card" [class.completed]="isCompleted">
+
+    <div class="task-icon-area">
+      <span class="emoji">{{ task.icon || '📝' }}</span>
+    </div>
+
+    <div class="task-content" (click)="navigateToDetail()" (keydown.enter)="navigateToDetail()" tabindex="0">
+      <header class="task-header">
+        <h3 class="task-title">{{ task.title }}</h3>
+      </header>
 
       <div class="task-meta">
-        @if (task.frequency !== 'NONE') {
-          <span class="meta-item">
-            <mat-icon>sync</mat-icon>
-            <span>{{ task.frequency }}</span>
-          </span>
-        }
+      <span *ngIf="task.frequency && task.frequency !== 'NONE'" class="meta-item">
+        <mat-icon class="mini-icon">repeat</mat-icon>
+        {{ frequencyLabels[task.frequency] }}
+      </span>
 
-        @if (task.endDate) {
-          <span class="meta-item">
-            <mat-icon>schedule</mat-icon>
-            <span>{{ task.endDate | relativeDate }}</span>
-          </span>
-        }
+      <span class="meta-item" *ngIf="task.endDate">
+        <mat-icon class="mini-icon">schedule</mat-icon>
+          {{ task.endDate | relativeDate }}
+      </span>
 
-      </div> <!-- fim task-meta -->
-    </div> <!-- fim task-details -->
+        <span class="meta-item xp-badge">
+        <mat-icon class="mini-icon">star</mat-icon>
+          {{ task.xpReward }} XP
+      </span>
+      </div>
+    </div>
 
-    <mat-checkbox
-      [checked]="isCompleted"
-      (change)="onStatusChange($event)"
-      (click)="$event.stopPropagation()"
-      (keydown.enter)="$event.stopPropagation()"
-      aria-label="Marcar tarefa como concluída">
-    </mat-checkbox>
+    <div class="task-action">
+      <label class="custom-checkbox">
+        <input
+          type="checkbox"
+          [checked]="isCompleted"
+          (change)="onStatusChange($event)"
+        >
+        <span class="checkmark"></span>
+      </label>
+    </div>
 
-  </div> <!-- fim task-content -->
+  </article>
 
-</mat-card>

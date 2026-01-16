@@ -13,7 +13,9 @@ export class CreateTaskUseCase {
 
   async execute(task: TaskRule, requesterUserId: string): Promise<void> {
 
-    if (task.userId !== requesterUserId) throw new Error("Usuário não autorizado a editar esta tarefa.");
+    console.log('origin:', task.userId,', requesterUserId:', requesterUserId) // @TODO remover esta linha depois
+
+    if (task.userId !== requesterUserId) throw new Error("Usuário não autorizado a criar esta tarefa.");
 
     TaskValidator.validate(task);
 

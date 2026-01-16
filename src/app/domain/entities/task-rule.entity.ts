@@ -5,6 +5,7 @@ export interface TaskRule {
   parentRuleId    ?: string;
   userId           : string;
 
+  icon            ?: string;
   title            : string;
   description     ?: string;
   tagId           ?: string;

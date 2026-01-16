@@ -66,7 +66,7 @@ describe('CreateTaskUseCase', () => {
     mockTask.userId = '2';
 
     await expect(createTaskUseCase.execute(mockTask,userId))
-      .rejects.toThrow('Usuário não autorizado a editar esta tarefa.');
+      .rejects.toThrow('Usuário não autorizado a criar esta tarefa.');
 
     expect(taskValidatorSpy).not.toHaveBeenCalled();
     expect(taskRuleRepositoryMock.create).not.toHaveBeenCalled();
