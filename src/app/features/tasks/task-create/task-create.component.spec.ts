@@ -1,17 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router} from '@angular/router';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import { of } from 'rxjs';
 
 import { TaskCreateComponent } from './task-create.component';
 import { TaskFacade } from '../../../core/facades/task-facade/task.facade';
-import {Difficulty, Frequency, Priority, TaskFormOutput} from '../../../domain/entities/task-types.entity';
-import {throwError} from 'rxjs';
+import { Difficulty, Frequency, Priority, TaskFormOutput } from '../../../domain/entities/task-types.entity';
+import { AuthService } from '../../../core/services/auth/auth.service';
 
 describe('TaskCreateComponent', () => {
   let taskCreateComponent: TaskCreateComponent;
   let fixture: ComponentFixture<TaskCreateComponent>;
   let taskFacadeMock : any;
+  let authServiceMock: any;
   let routerMock : any;
+
+  const mockUser = { uid: 'user-123', email: 'teste@teste.com' };
 
   const mockTaskFormOutput: TaskFormOutput = {
     title: 'Teste Unitário',
@@ -32,6 +36,11 @@ describe('TaskCreateComponent', () => {
       create: jest.fn()
     };
 
+    authServiceMock = {
+      currentUser$: of(mockUser),
+      getValidUserId: jest.fn()
+    };
+
     routerMock = {
       navigate: jest.fn()
     };
@@ -40,6 +49,7 @@ describe('TaskCreateComponent', () => {
       imports: [TaskCreateComponent],
       providers: [
         { provide: TaskFacade, useValue: taskFacadeMock },
+        { provide: AuthService, useValue: authServiceMock },
         { provide: Router, useValue: routerMock },
         provideNativeDateAdapter()
       ]
