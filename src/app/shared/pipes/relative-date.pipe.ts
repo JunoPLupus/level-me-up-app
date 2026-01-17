@@ -9,12 +9,12 @@ import { DatePipe } from '@angular/common';
 export class RelativeDatePipe implements PipeTransform {
   constructor(private datePipe: DatePipe) {}
 
-  transform(value: Date | string | undefined | null): string {
-    if (!value) {
+  transform(dateValue: Date | string | undefined | null, showTime : boolean = true): string {
+    if (!dateValue) {
       return '';
     }
 
-    const date = new Date(value);
+    const date = new Date(dateValue);
     const today = new Date();
     const tomorrow = new Date();
     tomorrow.setDate(today.getDate() + 1);
@@ -23,13 +23,17 @@ export class RelativeDatePipe implements PipeTransform {
     const timeString = this.datePipe.transform(date, 'HH:mm');
 
     if (date.toDateString() === today.toDateString()) {
-      return `Hoje às ${timeString}`;
+      return showTime? `Hoje às ${timeString}` : 'Hoje';
     }
 
     if (date.toDateString() === tomorrow.toDateString()) {
-      return `Amanhã às ${timeString}`;
+      return showTime? `Amanhã às ${timeString}` : 'Amanhã';
     }
 
-    return this.datePipe.transform(date, 'dd/MM \'às\' HH:mm') || '';
+    const fullDate = showTime?
+      this.datePipe.transform(date, 'dd/MM \'às\' HH:mm'):
+      this.datePipe.transform(date, 'dd/MM');
+
+    return fullDate || '';
   }
 }

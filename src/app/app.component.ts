@@ -3,14 +3,13 @@ import { RouterOutlet } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
 import { Observable } from 'rxjs';
 
-import { NavBarComponent } from './shared/components/nav-bar/nav-bar.component';
 import { AuthService } from './core/services/auth/auth.service';
 import { User } from './domain/entities/user.entity';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [ RouterOutlet, NavBarComponent, AsyncPipe ],
+  imports: [ RouterOutlet, AsyncPipe ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

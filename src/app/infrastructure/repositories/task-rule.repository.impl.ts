@@ -28,6 +28,7 @@ export class TaskRuleRepositoryImpl implements TaskRuleRepository {
       id: '2',
       userId: '1',
       title: 'Configurar GitHub Actions',
+      tagId:'tag-2',
       priority: Priority.MEDIUM,
       difficulty: Difficulty.MEDIUM,
       frequency: Frequency.DAILY,

@@ -1,5 +1,6 @@
-import { Component, computed, inject, Signal, signal, WritableSignal } from '@angular/core';
+import { Component, computed, effect, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,6 +16,12 @@ import { AddTaskButtonComponent } from './add-task-button.component';
 import { TaskFacade } from '../../../core/facades/task-facade/task.facade';
 import { TaskRule } from '../../../domain/entities/task-rule.entity';
 import { TaskStatus } from '../../../domain/entities/task-types.entity';
+import { Tag } from '../../../domain/entities/tag.entity';
+import { getTagName,
+         MOCK_TAGS
+       } from '../../../shared/utils/task-ui-constants/task-ui.constants';
+import { AuthService } from '../../../core/services/auth/auth.service';
+import { RelativeDatePipe } from '../../../shared/pipes/relative-date.pipe';
 
 @Component({
   selector: 'app-task-list',
@@ -30,6 +37,8 @@ import { TaskStatus } from '../../../domain/entities/task-types.entity';
     MatInputModule,
     MatFormFieldModule,
 
+    RelativeDatePipe,
+
     TaskListItemComponent,
     AddTaskButtonComponent
   ],
@@ -42,10 +51,11 @@ import { TaskStatus } from '../../../domain/entities/task-types.entity';
 
 export class TaskListComponent {
 
+  private authService : AuthService = inject(AuthService);
   private taskFacade : TaskFacade = inject(TaskFacade);
-  private datePipe : DatePipe = inject(DatePipe);
 
   protected readonly TaskStatus = TaskStatus;
+  protected readonly getTagName = getTagName;
 
   selectedStatus : WritableSignal<TaskStatus> = signal<TaskStatus>(TaskStatus.PENDING);
   selectedTagId : WritableSignal<string> = signal<string>('ALL');
@@ -57,10 +67,18 @@ export class TaskListComponent {
   completedTaskIds : WritableSignal<Set<string>> = signal<Set<string>>(new Set<string>());
 
   // @TODO Mock de Categorias (Depois virá do TagFacade)
-  availableTags : WritableSignal<string[]> = signal(['Trabalho', 'Estudos', 'Casa']);
+  availableTags : WritableSignal<Tag[]> = signal(MOCK_TAGS);
 
-  ngOnInit(): void {
-    this.taskFacade.loadTasks();
+  protected currentUser = toSignal(this.authService.currentUser$);
+
+  constructor() {
+    effect(() => {
+      const user = this.currentUser();
+
+      if (user) {
+        this.taskFacade.loadTasks();
+      }
+    });
   }
 
   isTaskCompleted(taskId: string): boolean {
@@ -81,8 +99,8 @@ export class TaskListComponent {
   }
 
   private updateLocalStatus(taskId: string, isCompleted: boolean) : void {
-    this.completedTaskIds.update(currentSet => {
-      const newSet = new Set(currentSet);
+    this.completedTaskIds.update(currentTasksSet => {
+      const newSet = new Set(currentTasksSet);
       if (isCompleted) {
         newSet.add(taskId);
       } else {
@@ -92,28 +110,27 @@ export class TaskListComponent {
     });
   }
 
+  private matchesStatusFilter = (taskIsCompleted: boolean, filterStatus: TaskStatus): boolean => {
+    if (filterStatus === TaskStatus.PENDING) return !taskIsCompleted;
+    if (filterStatus === TaskStatus.COMPLETED) return taskIsCompleted;
+    return true;
+  };
+
   private filteredTasks : Signal<TaskRule[]> = computed(() => {
 
     const tasks : TaskRule[] = this.allTasks();
-    const tagFilter : string = this.selectedTagId();
-    const statusFilter : TaskStatus = this.selectedStatus();
-    const completedSet : Set<string> = this.completedTaskIds();
+    const selectedTag : string = this.selectedTagId();
+    const selectedStatus : TaskStatus = this.selectedStatus();
+    const completedTasksIds : Set<string> = this.completedTaskIds();
 
     return tasks.filter(task => {
-      const matchesTag : boolean = tagFilter === 'ALL' || task.tagId === tagFilter;
+      const matchesTagFilter : boolean = selectedTag === 'ALL' || task.tagId === selectedTag;
+      if (!matchesTagFilter) return false;
 
-      const isCompleted : boolean = completedSet.has(task.id);
-      let matchesStatus : boolean = true;
+      const isCompleted : boolean = completedTasksIds.has(task.id);
 
-      if (statusFilter === TaskStatus.PENDING) {
-        matchesStatus = !isCompleted;
-      } else if (statusFilter === TaskStatus.COMPLETED) {
-        matchesStatus = isCompleted;
-      }
-
-      return matchesTag && matchesStatus;
+      return this.matchesStatusFilter(isCompleted, selectedStatus);
     });
-
   });
 
   tasksCount = computed(() => {
@@ -121,7 +138,7 @@ export class TaskListComponent {
     const completedSet : Set<string> = this.completedTaskIds();
 
     const total : number = tasks.length;
-    const completed : number = tasks.filter(t => completedSet.has(t.id)).length;
+    const completed : number = tasks.filter(task => completedSet.has(task.id)).length;
 
     return {
       pendentes: total - completed,
@@ -131,27 +148,13 @@ export class TaskListComponent {
 
   });
 
-  displayDate = computed(() => {
-    const today = new Date();
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-
-    if (today.toDateString() === this.selectedDate().toDateString()) return 'Hoje';
-
-    else if (tomorrow.toDateString() === this.selectedDate().toDateString()) return 'Amanhã';
-
-    else return this.datePipe.transform(this.selectedDate(), 'dd/MM') || '';
-
-  });
-
-
   groupedTasks = computed(() => {
 
     const tasks : TaskRule[] = this.filteredTasks();
 
     const grouped = tasks.reduce((collection, task) => {
 
-      const tag : string = task.tagId || 'NONE';
+      const tag : string = task.tagId? getTagName(task.tagId) : 'Uncategorized';
 
       if (!collection[tag]) collection[tag] = [];
 
@@ -161,9 +164,11 @@ export class TaskListComponent {
 
     }, {} as Record<string, TaskRule[]>);
 
-    return Object.entries(grouped);
+    return Object.keys(grouped).map(tagName => ({
+      tagName,
+      tasks: grouped[tagName]
+    }));
   });
-
 
   changeDateFilter(event: MatDatepickerInputEvent<Date>) : void {
     if (event.value) this.selectedDate.set(event.value);

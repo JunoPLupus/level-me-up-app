@@ -1,94 +1,102 @@
-<div class="task-list-page">
-  <div class="header">
-    <div class="title-container">
+<div class="screen-container">
 
-      <button mat-button class="category-filter-btn" [matMenuTriggerFor]="categoryMenu">
-        <span class="button-content-wrapper">
-          <mat-icon>label_outline</mat-icon>
-          <span>{{ selectedTagId() === 'ALL' ? 'Todas' : selectedTagId() }}</span>
-          <mat-icon>expand_more</mat-icon>
-        </span>
-      </button>
+  <header class="app-header">
 
-      <mat-menu #categoryMenu="matMenu">
-        <button mat-menu-item (click)="changeTagFilter('ALL')">
-          <mat-icon>layers_clear</mat-icon>
-          <span>Todas</span>
-        </button>
+    <div class="header-top">
 
-        @for (tag of availableTags(); track tag) {
-          <button mat-menu-item (click)="changeTagFilter(tag)">
-            <mat-icon>label_outline</mat-icon>
-            <span>{{ tag }}</span>
+      <div class="user-area">
+        <div class="avatar-circle">
+          <img
+            [src]="currentUser()?.photoGoogleUrl || '/assets/avatar-placeholder.jpg'"
+            alt="Avatar"
+            class="avatar-img"
+            referrerpolicy="no-referrer"
+          >
+          <span class="level-badge">LV {{ currentUser()?.levelInfo?.currentLevel || '0' }}</span>
+        </div>
+
+        <div class="user-info">
+          <h1 class="greeting">Olá, {{ currentUser()?.displayName || 'Visitante' }}!</h1>
+
+          <button class="tag-dropdown-trigger" [matMenuTriggerFor]="tagsMenu">
+            <mat-icon class="tag-icon">local_offer</mat-icon>
+            <span class="selected-tag-label">
+              {{ selectedTagId() === 'ALL' ? 'Todos' : getTagName(selectedTagId()) }}
+            </span>
+            <mat-icon class="chevron-icon">expand_more</mat-icon>
           </button>
-        }
-      </mat-menu>
-
-      <span class="date-display">{{ displayDate() }}</span>
-
-    </div>
-
-    <div class="calendar-icon">
-      <input class="hidden-datepicker-input"
-             [matDatepicker]="picker"
-             (dateChange)="changeDateFilter($event)">
-      <mat-datepicker #picker></mat-datepicker>
-
-      <button mat-icon-button (click)="picker.open()" aria-label="Escolher data">
-        <mat-icon>calendar_today</mat-icon>
-      </button>
-    </div>
-
-  </div>
-
-  <div class="filters">
-
-    <mat-chip
-      [class.active-chip]="selectedStatus() === TaskStatus.PENDING"
-      (click)="changeStatusFilter(TaskStatus.PENDING)"
-      (keydown.enter)="changeStatusFilter(TaskStatus.PENDING)"
-      tabindex="0">
-      Pendentes ({{ tasksCount().pendentes }})
-    </mat-chip>
-
-    <mat-chip
-      [class.active-chip]="selectedStatus() === TaskStatus.COMPLETED"
-      (click)="changeStatusFilter(TaskStatus.COMPLETED)"
-      (keydown.enter)="changeStatusFilter(TaskStatus.COMPLETED)"
-      tabindex="0">
-      Concluídas ({{ tasksCount().concluidas }})
-    </mat-chip>
-
-    <mat-chip
-      [class.active-chip]="selectedStatus() === TaskStatus.FAILED"
-      (click)="changeStatusFilter(TaskStatus.FAILED)"
-      (keydown.enter)="changeStatusFilter(TaskStatus.FAILED)"
-      tabindex="0">
-      Perdidas ({{ tasksCount().perdidas }})
-    </mat-chip>
-  </div>
-
-  <div class="task-list-container">
-    @for (group of groupedTasks(); track group[0]) {
-
-      <div class="task-group">
-        <h2 class="category-title">{{ group[0] }}</h2>
-
-        @for (task of group[1]; track task.id) {
-          <app-task-list-item
-            [task]="task"
-            [isCompleted]="isTaskCompleted(task.id)"
-            (statusToggle)="onToggleTask(task, $event)">
-          </app-task-list-item>
-        }
+        </div>
       </div>
 
-    } @empty {
+      <div class="date-area" (click)="picker.open()">
+        <mat-icon>calendar_today</mat-icon>
+        <span class="date-label">{{ selectedDate() | relativeDate:false }}</span>
+
+        <input matInput
+               [matDatepicker]="picker"
+               class="hidden-input"
+               (dateChange)="changeDateFilter($event)"
+        >
+        <mat-datepicker #picker></mat-datepicker>
+      </div>
+
+    </div>
+
+    <nav class="status-tabs">
+      <button
+        class="tab-btn"
+        [class.active]="selectedStatus() === TaskStatus.PENDING"
+        (click)="changeStatusFilter(TaskStatus.PENDING)">
+        Pendentes ({{ tasksCount().pendentes }})
+      </button>
+
+      <button
+        class="tab-btn"
+        [class.active]="selectedStatus() === TaskStatus.COMPLETED"
+        (click)="changeStatusFilter(TaskStatus.COMPLETED)">
+        Concluídas ({{ tasksCount().concluidas }})
+      </button>
+
+      <button class="tab-btn disabled">
+        Perdidas ({{ tasksCount().perdidas }})
+      </button>
+    </nav>
+
+  </header>
+
+  <mat-menu #tagsMenu="matMenu" class="custom-menu">
+    <button mat-menu-item (click)="changeTagFilter('ALL')">Todos</button>
+    @for (tag of availableTags(); track tag.id) {
+      <button mat-menu-item (click)="changeTagFilter(tag.id)">
+        {{ tag.name }}
+      </button>
+    }
+  </mat-menu>
+
+  <main class="task-list-content">
+
+    @if (groupedTasks().length === 0) {
       <div class="empty-state">
         <p>Nenhuma tarefa encontrada.</p>
       </div>
     }
-  </div>
+
+    @for (group of groupedTasks(); track group.tagName) {
+      <section class="task-group">
+        <h2 class="group-title">{{ group.tagName }}</h2>
+        <div class="group-items">
+          @for (task of group.tasks; track task.id) {
+            <app-task-list-item
+              [task]="task"
+              [isCompleted]="isTaskCompleted(task.id)"
+              (statusToggle)="onToggleTask(task, $event)">
+            </app-task-list-item>
+          }
+        </div>
+      </section>
+    }
+  </main>
 
   <app-add-task-button></app-add-task-button>
+
 </div>

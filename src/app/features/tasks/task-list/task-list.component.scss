@@ -1,100 +1,148 @@
-.task-list-page {
-  padding: 0 16px; // Adiciona 16px de espaçamento nas laterais
+// Layout Geral
+.screen-container {
+  padding: 20px;
+  padding-bottom: 80px;
+  background-color: #121212;
+  min-height: 100vh;
+  color: white;
 }
 
-.title-container {
+// Cabeçalho
+.app-header {
+  margin-bottom: 24px;
+}
+
+.header-top {
   display: flex;
-  // 'baseline' alinha a base do texto "Todos" com a base do texto "Hoje",
-  // o que fica visualmente mais agradável.
-  flex-direction: column; // <-- MUDA A DIREÇÃO PARA VERTICAL (EMPILHA)
-  align-items: flex-start; // <-- Alinha os itens à esquerda dentro da coluna
-  // gap: 8px; // <-- REMOVA ou comente o gap horizontal, não é mais necessário
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
 }
 
-.category-filter-btn {
-  // Remove o padding padrão do mat-button para um visual mais limpo
-  padding: 0 !important;
+// Área do Usuário
+.user-area {
+  display: flex;
+  gap: 12px;
+}
+
+.avatar-circle {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  background-color: #333;
+  border-radius: 50%;
+
+  // Centraliza a imagem ou texto (Alt) lá dentro
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid #2a2a2a;
+
+  .avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  .level-badge {
+    position: absolute;
+
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    background-color: #8A4FFF;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    border: 2px solid #121212;
+
+    white-space: nowrap;
+    z-index: 2;
+  }
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  .greeting {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+  }
+}
+
+// O Dropdown de Tags (Estilo Texto)
+.tag-dropdown-trigger {
+  background: none;
+  border: none;
+  color: #B0B0B0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
   font-size: 14px;
-  font-weight: bold;
-  line-height: 1;
+  margin-top: 4px;
 
-  .mat-icon {
-    // Ajusta o alinhamento vertical dos ícones
-    vertical-align: middle;
-  }
+  .tag-icon { font-size: 16px; width: 16px; height: 16px; }
+  .chevron-icon { font-size: 18px; width: 18px; height: 18px; }
+
+  &:hover { color: white; }
 }
 
-.button-content-wrapper {
-  display: inline-flex; // Usamos inline-flex para que o span se comporte bem dentro do botão
+// Área da Data (Direita)
+.date-area {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.1rem;
-}
+  cursor: pointer;
+  color: #B0B0B0;
 
-.date-display {
-  color: #6b778c; // Deixa o texto da data com um cinza sutil
-  font-size: 14px; // Alinha melhor com o tamanho do título
-  font-weight: normal;
-}
+  .date-label { font-size: 12px; margin-top: 2px; }
 
-.hidden-datepicker-input {
-  display: none;
-}
-
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 24px;
-
-  .mat-mdc-chip .mat-mdc-chip-action-label {
-    font-size: 11px !important;
-  }
-
-  .mat-mdc-chip {
-    background-color: #e9ecef;
-    cursor: pointer; // Adiciona um feedback visual de que o chip é clicável
-  }
-
-  .mat-mdc-chip.active-chip {
-    background-color: #e3d5f5 !important;
-    color: #673ab7 !important;
+  .hidden-input {
+    display: none;
+    width: 0;
+    height: 0;
   }
 }
 
-// Espaçamento principal do header
-.header {
+// Abas (Tabs)
+.status-tabs {
   display: flex;
-  justify-content: space-between; // <-- A MÁGICA: empurra os itens para as extremidades
-  align-items: center;
-  margin-bottom: 24px;
+  gap: 12px;
 }
 
-// Ajuste o tamanho e o alinhamento da parte do título
-.title-container {
-  display: flex;
-  align-items: baseline;
-  gap: 8px; // Diminui o espaço entre "Todos" e "Hoje"
+.tab-btn {
+  background: none;
+  border: 1px solid #333;
+  color: #B0B0B0;
+  padding: 8px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+
+  &.active {
+    background-color: #8A4FFF;
+    color: white;
+    border-color: #8A4FFF;
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 
-// Diminua o tamanho da fonte do título
-.category-filter-btn {
-  padding: 0 !important;
-  font-size: 20px; // <-- Diminuído de 28px
-  font-weight: bold;
-  line-height: 1;
-}
-
-// PASSO 4: Diminua o tamanho da fonte da data
-.date-display {
-  color: #6b778c;
-  font-size: 16px; // <-- Mantém o mesmo tamanho do título
-  font-weight: normal;
-}
-
-.category-title {
-  font-size: 16px;       // Tamanho de fonte bem menor
-  font-weight: 500;      // Um pouco mais grosso que o normal, mas não "bold"
-  color: #5e6c84;        // Uma cor de texto mais suave
-  margin-top: 24px;      // Espaço acima do título
-  margin-bottom: 12px;   // Espaço entre o título e as tarefas
+// Grupos
+.group-title {
+  font-size: 14px;
+  color: #B0B0B0;
+  margin: 16px 0 8px 0;
 }

@@ -1,13 +1,9 @@
 <main class="main-content">
 
   <section style="background: #f0f0f0; padding: 1rem; margin-bottom: 1rem; border-bottom: 2px solid #ccc;">
-    <h3>Auth Debug</h3>
 
     @if (currentUser$ | async; as user) {
       <div style="color: green;">
-        <p>✅ <strong>Logado:</strong> {{ user.displayName }}</p>
-        <p>📷 <strong>Foto:</strong> {{ user.photoGoogleUrl ? 'Sim' : 'Não' }}</p>
-        <p>🎮 <strong>Nível (Mock):</strong> {{ user.levelInfo.currentLevel }}</p>
         <button (click)="handleLogout()">Sair</button>
       </div>
     } @else {
@@ -19,5 +15,3 @@
   </section>
   <router-outlet></router-outlet>
 </main>
-
-<app-nav-bar></app-nav-bar>
