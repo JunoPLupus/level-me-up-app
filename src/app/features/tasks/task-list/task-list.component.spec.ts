@@ -104,15 +104,16 @@ describe('TaskListComponent', () => {
     });
 
     it('should return only completed tasks when filter is "completed"', () => {
+      taskListComponent.selectedStatus.set(TaskStatus.COMPLETED);
       taskFacadeMock.tasks.set(mockTasks);
       taskListComponent.completedTaskIds.set(new Set(['1']));
       const filteredTasks = taskListComponent.filteredTasks();
-      taskListComponent.selectedStatus.set(TaskStatus.COMPLETED);
+
 
       fixture.detectChanges();
 
       expect(filteredTasks.length).toBe(1);
-      expect(filteredTasks[0].id).toBe('2');
+      expect(filteredTasks[0].id).toBe('1');
     });
   });
 
