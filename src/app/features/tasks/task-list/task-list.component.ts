@@ -116,7 +116,7 @@ export class TaskListComponent {
     return true;
   };
 
-  private filteredTasks : Signal<TaskRule[]> = computed(() => {
+  filteredTasks : Signal<TaskRule[]> = computed(() => {
 
     const tasks : TaskRule[] = this.allTasks();
     const selectedTag : string = this.selectedTagId();
