@@ -1,4 +1,4 @@
-export interface LevelConfiguration {
+export interface LevelConfiguration { // @TODO rename to LevelingConfiguration
   mode              : 'FORMULA' | 'CUSTOM_TABLE';
 
   formulaParams    ?: {
