@@ -1,0 +1,83 @@
+site_name: Level Me Up
+site_url: https://junoplupus.github.io/level-me-up
+site_author: Juno Piazza Lopes
+site_description: Documentação oficial do Level Me Up — app de tarefas com gamificação.
+
+repo_name: JunoPLupus/level-me-up
+repo_url: https://github.com/JunoPLupus/level-me-up
+
+docs_dir: docs
+
+theme:
+  name: material
+  language: pt-BR
+  palette:
+    - scheme: slate
+      primary: deep purple
+      accent: purple
+      toggle:
+        icon: material/brightness-4
+        name: Mudar para tema claro
+    - scheme: default
+      primary: deep purple
+      accent: purple
+      toggle:
+        icon: material/brightness-7
+        name: Mudar para tema escuro
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - navigation.top
+    - search.highlight
+    - search.suggest
+    - content.code.copy
+    - toc.follow
+
+markdown_extensions:
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+nav:
+  - Home: index.md
+  - "Versão 1.0":
+      - Visão Geral: v1.0/visao-geral.md
+      - Requisitos: v1.0/requisitos.md
+      - Casos de Uso:
+          - Índice: v1.0/casos-de-uso/index.md
+          - UC01 - Listar Tarefas: v1.0/casos-de-uso/uc01.md
+          - UC02 - Interagir com Tarefa: v1.0/casos-de-uso/uc02.md
+          - UC03 - Criar Tarefa: v1.0/casos-de-uso/uc03.md
+          - UC04 - Editar Tarefa: v1.0/casos-de-uso/uc04.md
+          - UC05 - Excluir Tarefa: v1.0/casos-de-uso/uc05.md
+          - UC06 - Desistir da Tarefa: v1.0/casos-de-uso/uc06.md
+          - UC07 - Listar Tags: v1.0/casos-de-uso/uc07.md
+          - UC08 - Criar Tag: v1.0/casos-de-uso/uc08.md
+          - UC09 - Editar Tag: v1.0/casos-de-uso/uc09.md
+          - UC10 - Excluir Tag: v1.0/casos-de-uso/uc10.md
+      - Arquitetura:
+          - Diagrama de Classes: v1.0/arquitetura/classes.md
+          - Diagrama de Pacotes: v1.0/arquitetura/pacotes.md
+
+extra_css:
+  - assets/stylesheets/extra.css

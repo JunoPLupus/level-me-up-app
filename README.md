@@ -4,12 +4,12 @@
 ![Badge Firebase](https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white)
 
 ## 📌 Descrição do Projeto
-**Level Me Up** é uma aplicação que combina organização pessoal com mecânicas de jogos (RPG). 
-O objetivo é tornar o gerenciamento de tarefas mais engajador, permitindo que o usuário ganhe 
+**Level Me Up** é uma aplicação que combina organização pessoal com mecânicas de jogos (RPG).
+O objetivo é tornar o gerenciamento de tarefas mais engajador, permitindo que o usuário ganhe
 XP e suba de níveis ao concluir suas atividades diárias.
 
-Este projeto nasceu inicialmente como parte da disciplina de *Projeto de Interface Web* no 
-curso de Sistemas para Internet do IFTO (Campus Palmas) como uma simples *Task List*, 
+Este projeto nasceu inicialmente como parte da disciplina de *Projeto de Interface Web* no
+curso de Sistemas para Internet do IFTO (Campus Palmas) como uma simples *Task List*,
 e agora está sendo evoluído com foco em arquitetura de software escalável.
 
 ---
@@ -28,10 +28,10 @@ O foco atual é o "Core Loop" da gamificação:
 - 🌙 Tema escuro (Dark Mode)
 - 🔔 Notificações de lembrete
 - 🌳 Árvore de Habilidades (Habilidades com sub-habilidades)
-- 🗂️ Tipos de Tarefas: 
+- 🗂️ Tipos de Tarefas:
   - Normal (*Padrão*)
   - Contagem (Vezes, Minutos, Horas, Litros, Páginas)
-  - Hábito Bom 
+  - Hábito Bom
   - Hábito Ruim
 - 💀 Sistema de Hábitos Ruins e Punições.
 - 🪙 Moedas
@@ -51,18 +51,17 @@ O foco atual é o "Core Loop" da gamificação:
 ---
 
 ## 📄 Documentação
-Está sendo documentado através do Obsidian.
-- 📋 [Requisitos Funcionais e Não Funcionais](docs/Requisitos_1.0.md)
-- 📖 [Detalhamento de Casos de Uso](docs/Casos-de-Uso_1.0.md)
 
-### 🗺️ Diagramas
-Junto aos wireframes está sendo feito os diagramas usando o 'Miro':
+A documentação completa do projeto está publicada em:
 
-- ![Diagrama de Casos de Uso](docs/Diagrama-de-Casos-de-Uso.jpg)
-> *Nota: O código fonte deste diagrama está disponível em [docs/diagrams/src](./docs/diagrams/src).*
+> 📚 **[junoplupus.github.io/level-me-up](https://junoplupus.github.io/level-me-up)**
+
+Inclui requisitos, detalhamento de casos de uso, diagramas de classes, de pacotes e diagramas de sequência.
+
+Os arquivos-fonte da documentação estão na pasta [`docs/`](./docs).
 
 ### 🎨 Wireframe
-![Wireframe do App](docs/wireframe-task-app.jpg)
+![Wireframe do App](docs/assets/images/v1.0/wireframe-task-app.jpg)
 
 O projeto foi desenvolvido com base em um **wireframe** previamente planejado, utilizando a ferramenta 'Figma'.
 
@@ -75,22 +74,22 @@ O projeto foi desenvolvido com base em um **wireframe** previamente planejado, u
 > - Git
 > - Java 21 LTS (Necessário apenas para rodar o SonarQube)
 
-1. Acesse o terminal;  
+1. Acesse o terminal;
 
 2. Clone o repositório:
-  ``git clone https://github.com/JunoPLupus/web-mobile-tasks-app``  
+   ``git clone https://github.com/JunoPLupus/web-mobile-tasks-app``
 
 3. Navegue até o diretório do projeto:
-   ``cd web-mobile-tasks-app``  
+   ``cd web-mobile-tasks-app``
 
 4. Instale as dependências:
-  ``npm install``  
+   ``npm install``
 
 5. Inicie o servidor de desenvolvimento:
-  ``ng serve`` ou ``npm serve --open``(se preferir abrir automaticamente no navegador).  
+   ``ng serve`` ou ``npm serve --open`` (se preferir abrir automaticamente no navegador).
 
 6. Abra o navegador e acesse:
-  ``http://localhost:4200``  
+   ``http://localhost:4200``
 
 ---
 

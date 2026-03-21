@@ -1,0 +1,4 @@
+.md-nav--secondary .md-nav__item,
+.md-nav__item--nested > .md-nav > .md-nav__list > .md-nav__item {
+  padding-left: 0.8rem;
+}
