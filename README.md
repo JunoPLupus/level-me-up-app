@@ -6,7 +6,7 @@
 ## 📌 Descrição do Projeto
 **Level Me Up** é uma aplicação que combina organização pessoal com mecânicas de jogos (RPG).
 O objetivo é tornar o gerenciamento de tarefas mais engajador, permitindo que o usuário ganhe
-XP e suba de níveis ao concluir suas atividades diárias.
+XP e suba de níveis ao concluir as suas atividades diárias.
 
 Este projeto nasceu inicialmente como parte da disciplina de *Projeto de Interface Web* no
 curso de Sistemas para Internet do IFTO (Campus Palmas) como uma simples *Task List*,
@@ -16,13 +16,14 @@ e agora está sendo evoluído com foco em arquitetura de software escalável.
 
 ## ⚙️ V1.0 - MVP (Em desenvolvimento)
 O foco atual é o "Core Loop" da gamificação:
-- 📅 **Tarefas:** Criar, Editar (Regras e Exceções), Excluir e Concluir.
+- 📅 **Tarefas:** Criar, Editar, Excluir, Concluir e Pular.
 - 🧮 **Gamificação Básica:** Ganho de XP, Barra de Progresso e Níveis.
 - 💪 **Habilidades:** Vincular tarefas a habilidades específicas (ex: "Programação").
 - 🚩 **Tags:** Organização por etiquetas coloridas.
 - 👤 **Perfil:** Login e Visualização de estatísticas básicas.
 
 ## 🤖 Roadmap (Futuro)
+- 🔁 Repetição de Tarefas (Diárias, Semanais, Mensais, Anuais, Personalizadas)
 - 📈 Relatório de desempenho e gráficos
 - ⏰ Pomodoro Timer
 - 🌙 Tema escuro (Dark Mode)
@@ -37,17 +38,11 @@ O foco atual é o "Core Loop" da gamificação:
 - 🪙 Moedas
 - 🏪 Loja Virtual
 
+---
+
 ## 💻 Tecnologias Utilizadas
-**Front-end:**
-- [Angular](https://angular.io/) (Framework principal)
-- TypeScript (Lógica e Tipagem)
-- SCSS (Estilização)
 
-**Back-end (BaaS):**
-- [Firebase Firestore](https://firebase.google.com/) (Banco de Dados NoSQL)
-- Firebase Authentication (Gestão de Usuários)
-- Firebase Hosting (Hospedagem)
-
+> ![Angular](https://img.shields.io/badge/Angular-20.3.0-333333?style=for-the-badge&logo=angular&logoColor=white&labelColor=DD0031) ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.2-333333?style=for-the-badge&logo=typescript&logoColor=white&labelColor=007ACC) ![SCSS](https://img.shields.io/badge/SCSS-333333?style=for-the-badge&logo=sass&logoColor=white&labelColor=CC6699) ![Firebase](https://img.shields.io/badge/Firebase-11.4.0-333333?style=for-the-badge&logo=firebase&logoColor=white&labelColor=039BE5)
 ---
 
 ## 📄 Documentação
@@ -77,10 +72,10 @@ O projeto foi desenvolvido com base em um **wireframe** previamente planejado, u
 1. Acesse o terminal;
 
 2. Clone o repositório:
-   ``git clone https://github.com/JunoPLupus/web-mobile-tasks-app``
+   ``git clone https://github.com/JunoPLupus/level-me-up-app.git``
 
 3. Navegue até o diretório do projeto:
-   ``cd web-mobile-tasks-app``
+   ``cd level-me-up-app``
 
 4. Instale as dependências:
    ``npm install``
